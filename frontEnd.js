@@ -6,11 +6,11 @@ var topNoteBlocks = new Array(numberOfDifferentNotes);
 var fallDownSpeed = 5;
 var blocks;
 
-function start(numberOfNotes, targetFPS, gravity)
+function start(numberOfNotes, targetFPS, timeToFall)
 {
     numberOfDifferentNotes = numberOfNotes;
     fps = targetFPS;
-    fallDownSpeed = gravity;
+    fallDownSpeed = document.getElementById("noteArea").getBoundingClientRect().bottom/(timeToFall*fps);
 }
 
 function step(inputArray) {
@@ -25,15 +25,13 @@ function moveBlocks() {
             var rect = child.getBoundingClientRect();
             var newTop = rect.top + fallDownSpeed;
             var newBottom = document.getElementById("noteArea").getBoundingClientRect().bottom - fallDownSpeed - rect.bottom;
-            /*
-            if (newTop >= document.getElementById("noteArea").getBoundingClientRect().bottom) {
+            if (newTop >= document.getElementById("noteArea").getBoundingClientRect().bottom + fallDownSpeed) {
                 child.remove;
                 return;
             }
             if (newBottom <= 0) {
                 newBottom = 0;
             }
-            */
             child.style.top = newTop;
             child.style.bottom = newBottom;
         }        
@@ -70,6 +68,7 @@ function createNewBlock(noteIndex)
     console.log("newBlock");
     topNoteBlocks[noteIndex] = document.createElement("div");
     topNoteBlocks[noteIndex].id = "block" + noteIndex;
+    topNoteBlocks[noteIndex].className = "block";
     document.getElementById("noteArea").appendChild(topNoteBlocks[noteIndex]);
     topNoteBlocks[noteIndex].style.width = 100 / numberOfDifferentNotes + "%";
     var rect = topNoteBlocks[noteIndex].getBoundingClientRect();
