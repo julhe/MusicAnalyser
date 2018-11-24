@@ -7,7 +7,7 @@ window.onload = function () {
     var context = new AudioContext();
 
     var request = new XMLHttpRequest();
-    request.open('GET', "sounds/DrumNBase.mp3", true);
+    request.open('GET', "sounds/Oasis - Wonderwall.mp3", true);
     request.responseType = 'arraybuffer';
 
     var testAudio = context.createBufferSource();
