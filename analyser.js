@@ -63,34 +63,35 @@ window.onload = function () {
         testAudio.start(context.currentTime);
         
         // Get a canvas defined with ID "oscilloscope"
-        canvas = document.getElementById("oscilloscope");
-        canvasCtx = canvas.getContext("2d");
+        // canvas = document.getElementById("oscilloscope");
+        // canvasCtx = canvas.getContext("2d");
 
-        outText = document.getElementById("notes");
+        // outText = document.getElementById("notes");
+        start(4, 60, 5);
         draw();
     }
 
-    var dpsFast = [], dpsSlow = []; // dataPoints
-    var xVal = 0;
+    // var dpsFast = [], dpsSlow = []; // dataPoints
+    // var xVal = 0;
         
-    var chart = new CanvasJS.Chart("chartContainer", {
-        title :{
-            text: "Dynamic Data"
-        },
-        axisY: {
-            includeZero: false
-        },      
-        data: [
-            {
-                type: "line",
-                dataPoints: dpsFast
-            },
-            {
-                type: "line",
-                dataPoints: dpsSlow
-            },
-        ]
-    });
+    // var chart = new CanvasJS.Chart("chartContainer", {
+    //     title :{
+    //         text: "Dynamic Data"
+    //     },
+    //     axisY: {
+    //         includeZero: false
+    //     },      
+    //     data: [
+    //         {
+    //             type: "line",
+    //             dataPoints: dpsFast
+    //         },
+    //         {
+    //             type: "line",
+    //             dataPoints: dpsSlow
+    //         },
+    //     ]
+    // });
 
     function LogCompressor() {
         var transientLevel = Math.abs(compressorSlow.reduction - compressorFast.reduction);
@@ -123,13 +124,13 @@ window.onload = function () {
         //LogCompressor();
         analyser.getByteFrequencyData(dataArray);
       
-        canvasCtx.fillStyle = "rgb(200, 200, 200)";
-        canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
+        // canvasCtx.fillStyle = "rgb(200, 200, 200)";
+        // canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
       
-        canvasCtx.lineWidth = 2;
-        canvasCtx.strokeStyle = "rgb(0, 0, 0)";
+        // canvasCtx.lineWidth = 2;
+        // canvasCtx.strokeStyle = "rgb(0, 0, 0)";
       
-        canvasCtx.beginPath();
+        // canvasCtx.beginPath();
           
         //split into 4 bands
 
@@ -154,32 +155,42 @@ window.onload = function () {
             average /= (end - start);
             bands[i] = average;
         }
-
-        var sliceWidth = canvas.width * 1.0 / bandsCount;
-        var x = 0;
-        for (var i = 0; i < bands.length; i++) {
-      
-            var v = bands[i] / 128.0;
-            var y = v * canvas.height / 2.0;
-
-            if (i === 0) {
-                canvasCtx.moveTo(x, y);
-            } else {
-                canvasCtx.lineTo(x, y);
-            }
-
-            x += sliceWidth;
-        }
-      
-        canvasCtx.lineTo(canvas.width, canvas.height / 2);
-        canvasCtx.stroke();
     
-        var bufferWithIndex = [];
-        for (let i = 0; i < bufferLength; i++) {
-            const element = dataArray[i];
-            bufferWithIndex.push({x: i, value: element});
-        }
-        bufferWithIndex.sort(function(a, b) {return b.value - a.value});
-        outText.innerHTML = bufferWithIndex[0].value + " " + bufferWithIndex[0].x;
+        //TODO: schwellwert adaptive machen
+        bands[0] = bands[0] > 125;
+        bands[1] = bands[1] > 110;
+        bands[2] = bands[2] > 80;
+        bands[3] = bands[3] > 74;
+       // console.log(bands[3]);
+
+        step(bands);
+
+        // var sliceWidth = canvas.width * 1.0 / bandsCount;
+        // var x = 0;
+        // for (var i = 0; i < bands.length; i++) {
+      
+        //     var v = bands[i] / 128.0;
+        //     var y = v * canvas.height / 2.0;
+
+        //     if (i === 0) {
+        //         canvasCtx.moveTo(x, y);
+        //     } else {
+        //         canvasCtx.lineTo(x, y);
+        //     }
+
+        //     x += sliceWidth;
+        // }
+      
+        
+        // canvasCtx.lineTo(canvas.width, canvas.height / 2);
+        // canvasCtx.stroke();
+    
+        // var bufferWithIndex = [];
+        // for (let i = 0; i < bufferLength; i++) {
+        //     const element = dataArray[i];
+        //     bufferWithIndex.push({x: i, value: element});
+        // }
+        // bufferWithIndex.sort(function(a, b) {return b.value - a.value});
+        // outText.innerHTML = bufferWithIndex[0].value + " " + bufferWithIndex[0].x;
       }      
 }
