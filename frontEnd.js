@@ -1,9 +1,10 @@
 var numberOfDifferentNotes = 4;
 var input = new Uint16Array(numberOfDifferentNotes);
 var lastInput = new Uint16Array(numberOfDifferentNotes);
-var fps = 1;
+var fps = 60;
 var topNoteBlocks = new Array(numberOfDifferentNotes);
 var fallDownSpeed = 5;
+var blocks;
 
 document.body.onload = start;
 
@@ -11,23 +12,24 @@ document.body.onload = start;
 function start()
 {
     setInterval(createBlocksFromInput, 1000 / fps);
+    setInterval(moveBlocks, 1000 / fps);
 }
 
-function addElement() {
-    // erstelle ein neues div Element
-    // und gib ihm etwas Inhalt
-    var newDiv = document.createElement("div");
-    var newContent = document.createTextNode("Hi there and greetings!");
-    newDiv.appendChild(newContent); // füge den Textknoten zum neu erstellten div hinzu.
-
-    // füge das neu erstellte Element und seinen Inhalt ins DOM ein
-    var currentDiv = document.getElementById("div1");
-    document.body.insertBefore(newDiv, currentDiv);
+function moveBlocks() {
+    blocks = document.getElementById("noteArea").childNodes;
+    blocks.forEach(function (child) {
+        if (true) {
+            var rect = child.getBoundingClientRect();
+            var newTop = rect.top + fallDownSpeed;
+            var newBottom = document.getElementById("noteArea").getBoundingClientRect().bottom - fallDownSpeed - rect.bottom;
+            child.style.top = newTop;
+            child.style.bottom = newBottom;
+        }        
+    })
 }
 
 function createBlocksFromInput()
 {
-    console.log(input);
     input.forEach(function (value, index) {
         if (value != 0) {
             if (lastInput[index] == 0) {
@@ -43,14 +45,28 @@ function createBlocksFromInput()
 
 function elongateTopNote(noteIndex)
 {
-    topNoteBlocks[noteIndex].style.width += fallDownSpeed;
+    var rect = topNoteBlocks[noteIndex].getBoundingClientRect();
+    var newTop = - fallDownSpeed;
+    //var newBottom = document.getElementById("noteArea").getBoundingClientRect().bottom - fallDownSpeed - rect.bottom;
+    //console.log(rect.top + " , " + newBottom);
+    topNoteBlocks[noteIndex].style.top = newTop;
+    //topNoteBlocks[noteIndex].style.bottom = newBottom;
 }
 
 function createNewBlock(noteIndex)
 {
     console.log("newBlock");
     topNoteBlocks[noteIndex] = document.createElement("div");
+    topNoteBlocks[noteIndex].id = "block";
     document.getElementById("noteArea").appendChild(topNoteBlocks[noteIndex]);
+    topNoteBlocks[noteIndex].style.width = 100 / numberOfDifferentNotes + "%";
+    var rect = topNoteBlocks[noteIndex].getBoundingClientRect();
+    var newLeft = rect.left + document.getElementById("noteArea").offsetWidth * noteIndex / numberOfDifferentNotes;
+    var newRight = rect.right + (1 + document.getElementById("noteArea").offsetWidth * noteIndex) / numberOfDifferentNotes;
+    topNoteBlocks[noteIndex].style.left = newLeft;
+    topNoteBlocks[noteIndex].style.rigth = newRight;
+    var newBottom = document.getElementById("noteArea").getBoundingClientRect().bottom - fallDownSpeed;
+    topNoteBlocks[noteIndex].style.bottom = newBottom;
 }
 
 document.addEventListener('keydown', function (event) {
