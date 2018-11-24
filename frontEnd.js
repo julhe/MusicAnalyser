@@ -6,11 +6,11 @@ var topNoteBlocks = new Array(numberOfDifferentNotes);
 var fallDownSpeed = 5;
 var blocks;
 
-function start(numberOfNotes, targetFPS, gravity)
+function start(numberOfNotes, targetFPS, timeToFall)
 {
     numberOfDifferentNotes = numberOfNotes;
     fps = targetFPS;
-    fallDownSpeed = gravity;
+    fallDownSpeed = document.getElementById("noteArea").getBoundingClientRect().bottom/(timeToFall*fps);
 }
 
 function step(inputArray) {
