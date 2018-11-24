@@ -57,7 +57,7 @@ function createNewBlock(noteIndex)
 {
     console.log("newBlock");
     topNoteBlocks[noteIndex] = document.createElement("div");
-    topNoteBlocks[noteIndex].id = "block";
+    topNoteBlocks[noteIndex].id = "block" + noteIndex;
     document.getElementById("noteArea").appendChild(topNoteBlocks[noteIndex]);
     topNoteBlocks[noteIndex].style.width = 100 / numberOfDifferentNotes + "%";
     var rect = topNoteBlocks[noteIndex].getBoundingClientRect();
