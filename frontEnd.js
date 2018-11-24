@@ -25,6 +25,15 @@ function moveBlocks() {
             var rect = child.getBoundingClientRect();
             var newTop = rect.top + fallDownSpeed;
             var newBottom = document.getElementById("noteArea").getBoundingClientRect().bottom - fallDownSpeed - rect.bottom;
+            /*
+            if (newTop >= document.getElementById("noteArea").getBoundingClientRect().bottom) {
+                child.remove;
+                return;
+            }
+            if (newBottom <= 0) {
+                newBottom = 0;
+            }
+            */
             child.style.top = newTop;
             child.style.bottom = newBottom;
         }        
