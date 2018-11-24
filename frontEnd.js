@@ -6,15 +6,18 @@ var topNoteBlocks = new Array(numberOfDifferentNotes);
 var fallDownSpeed = 5;
 var blocks;
 
-document.body.onload = start;
-
-
-function start()
+function start(numberOfNotes, targetFPS, gravity)
 {
-    setInterval(createBlocksFromInput, 1000 / fps);
-    setInterval(moveBlocks, 1000 / fps);
+    numberOfDifferentNotes = numberOfNotes;
+    fps = targetFPS;
+    fallDownSpeed = gravity;
 }
 
+function step(inputArray) {
+    input = inputArray;
+    createBlocksFromInput();
+    moveBlocks();
+}
 function moveBlocks() {
     blocks = document.getElementById("noteArea").childNodes;
     blocks.forEach(function (child) {
