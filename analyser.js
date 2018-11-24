@@ -1,4 +1,3 @@
-
 const bandsCount = 4;
 var bands = [bandsCount];
 
@@ -8,7 +7,7 @@ window.onload = function () {
     var context = new AudioContext();
 
     var request = new XMLHttpRequest();
-    request.open('GET', "sounds/lied2.mpeg", true);
+    request.open('GET', "sounds/DrumNBase.mp3", true);
     request.responseType = 'arraybuffer';
 
     var testAudio = context.createBufferSource();

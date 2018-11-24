@@ -12,8 +12,8 @@ html, body {
     position: relative;
 }
 
-#block0 {
-    background-image: linear-gradient(#9574FF 15%, #4E17FF 85%);
+.block {
+    border-radius: 5%;
     margin-top: 0;
     top: 0;
     left: 0;
@@ -21,30 +21,16 @@ html, body {
     bottom: 100%;
     position: absolute;
 }
+
+#block0 {
+    background-image: linear-gradient(#9574FF 15%, #4E17FF 85%);
+}
 #block1 {
-    background-image: linear-gradient(#62FF62 15%, #62FF62 85%);
-    margin-top: 0;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 100%;
-    position: absolute;
+    background-image: linear-gradient(#62FF62 15%, #00FF00 85%);
 }
 #block2 {
     background-image: linear-gradient(#FFE462 15%, #FFD300 85%);
-    margin-top: 0;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 100%;
-    position: absolute;
 }
 #block3 {
     background-image: linear-gradient(#FF0000 15%, #FF6262 85%);
-    margin-top: 0;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 100%;
-    position: absolute;
 }
