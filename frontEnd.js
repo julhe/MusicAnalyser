@@ -21,28 +21,28 @@ function step(inputArray) {
 function moveBlocks() {
     blocks = document.getElementById("noteArea").childNodes;
     blocks.forEach(function (child) {
-        if (true) {
-            var rect = child.getBoundingClientRect();
-            var newTop = rect.top + fallDownSpeed;
-            var newBottom = document.getElementById("noteArea").getBoundingClientRect().bottom - fallDownSpeed - rect.bottom;
-            if (newTop >= document.getElementById("noteArea").getBoundingClientRect().bottom + fallDownSpeed) {
-                child.remove;
-                return;
-            }
-            if (newBottom <= 0) {
-                newBottom = 0;
-            }
-            child.style.top = newTop;
-            child.style.bottom = newBottom;
-        }        
+        var rect = child.getBoundingClientRect();
+        var newTop = rect.top + fallDownSpeed;
+        var newBottom = document.getElementById("noteArea").getBoundingClientRect().bottom - fallDownSpeed - rect.bottom;
+        if (newTop >= document.getElementById("noteArea").getBoundingClientRect().bottom + fallDownSpeed) {
+            child.remove;
+            return;
+        }
+        if (newBottom <= 0) {
+            newBottom = 0;
+        }
+        child.style.top = newTop;
+        child.style.bottom = newBottom;       
     })
 }
 
 function createBlocksFromInput()
 {
+    var newNote = false;
     input.forEach(function (value, index) {
         if (value != 0) {
             if (lastInput[index] == 0) {
+                newNote = true;
                 createNewBlock(index);
             }
             if (value == lastInput[index]) {
@@ -51,6 +51,12 @@ function createBlocksFromInput()
         }
         lastInput[index] = value;
     })
+    if (newNote) {
+        backGroundBeat();
+    }
+    else {
+        document.getElementById("noteArea").style.backgroundImage = "linear-gradient(#375,#210 75%)"
+    }
 }
 
 function elongateTopNote(noteIndex)
@@ -78,6 +84,10 @@ function createNewBlock(noteIndex)
     topNoteBlocks[noteIndex].style.rigth = newRight;
     var newBottom = document.getElementById("noteArea").getBoundingClientRect().bottom - fallDownSpeed;
     topNoteBlocks[noteIndex].style.bottom = newBottom;
+}
+
+function backGroundBeat() {
+    document.getElementById("noteArea").style.backgroundImage = "linear-gradient(#386,#321 75%)"
 }
 
 document.addEventListener('keydown', function (event) {

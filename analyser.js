@@ -7,7 +7,7 @@ window.onload = function () {
     var context = new AudioContext();
 
     var request = new XMLHttpRequest();
-    request.open('GET', "sounds/DrumNBase.mp3", true);
+    request.open('GET', "sounds/lied2.mpeg", true);
     request.responseType = 'arraybuffer';
 
     var testAudio = context.createBufferSource();
@@ -28,9 +28,9 @@ window.onload = function () {
     compressorSlow.release.setValueAtTime(0.25, context.currentTime);
 
     var compressorFast = context.createDynamicsCompressor();
-    compressorFast.threshold.setValueAtTime(-10, context.currentTime);
+    compressorFast.threshold.setValueAtTime(-50, context.currentTime);
     compressorFast.knee.setValueAtTime(40, context.currentTime);
-    compressorFast.ratio.setValueAtTime(12, context.currentTime);
+    compressorFast.ratio.setValueAtTime(999, context.currentTime);
     compressorFast.attack.setValueAtTime(0, context.currentTime);
     compressorFast.release.setValueAtTime(0.01, context.currentTime);
 
@@ -44,7 +44,6 @@ window.onload = function () {
     osc0.start(context.currentTime);
     request.send();
 
-    var delayNode = context.createDelay(2.0);
     var analyser = context.createAnalyser();
     analyser.fftSize = 8192;
     analyser.maxDecibels = 90;
@@ -54,52 +53,18 @@ window.onload = function () {
     analyser.getByteTimeDomainData(dataArray);
  
     var canvasCtx, canvas, outText;
-
-    // var sliders = document.getElementsByClassName("slider");
-    // for (var i = 0; i < sliders.length; i++) {
-    //     sliders[i].addEventListener('mousemove', changeParameter, false);
-    // }
-
-    // function changeParameter() {
-    //     switch (this.id) {
-    //     case "thresholdSlider":
-    //         compressorFast.threshold.value = (this.value - 100);
-    //         document.getElementById("thresholdOutput").innerHTML = (this.value - 100) + " dB";
-    //         break;
-    //     case "ratioSlider":
-    //         compressorFast.ratio.value = (this.value / 5);
-    //         document.getElementById("ratioOutput").innerHTML = (this.value / 5) + " dB";
-    //         break;
-    //     case "kneeSlider":
-    //         compressorFast.knee.value = (this.value / 2.5);
-    //         document.getElementById("kneeOutput").innerHTML = (this.value / 2.5) + " degree";
-    //         break;
-    //     case "attackSlider":
-    //         compressorFast.attack.value = (this.value / 1000);
-    //         document.getElementById("attackOutput").innerHTML = (this.value / 1000) + " dB";
-    //         break;
-    //     case "releaseSlider":
-    //         compressorFast.release.value = (this.value / 1000);
-    //         document.getElementById("releaseOutput").innerHTML = (this.value / 1000) + " dB";
-    //         break;
-    //     }
-    // }
-    
-    var debugText = document.getElementById("debugVals");
     function OnLoadFinished(){
 
         testAudio.connect(compressorSlow);
-        testAudio.connect(compressorFast)
-        compressorFast.connect(context.destination);
-        compressorFast.connect(delayNode);
-        
-        delayNode.connect(analyser);
+        testAudio.connect(compressorFast);
+        testAudio.connect(context.destination);
+        testAudio.connect(analyser);
         testAudio.start(context.currentTime);
         
         // Get a canvas defined with ID "oscilloscope"
         // canvas = document.getElementById("oscilloscope");
         // canvasCtx = canvas.getContext("2d");
-        
+
         // outText = document.getElementById("notes");
         start(4, 60, 5);
         draw();
@@ -190,17 +155,12 @@ window.onload = function () {
             bands[i] = average;
         }
     
-        debugText.innerHTML = "";
-        bands.forEach(element => {
-            debugText.innerHTML += " " + parseFloat( Math.round(element * 100) / 100).toFixed(3);
-        });
-    //    debugText.innerHTML = bands;
         //TODO: schwellwert adaptive machen
-        bands[0] = bands[0] > 123;
+        bands[0] = bands[0] > 125;
         bands[1] = bands[1] > 110;
-        bands[2] = bands[2] > 82;
-        bands[3] = bands[3] > 70;
-        
+        bands[2] = bands[2] > 80;
+        bands[3] = bands[3] > 74;
+       // console.log(bands[3]);
 
         step(bands);
 
