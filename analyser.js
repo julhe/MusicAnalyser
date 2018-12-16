@@ -1,3 +1,4 @@
+// hey there!
 const bandsCount = 4;
 var fps = 60;
 var timeToFall = 3;
