@@ -3,13 +3,28 @@ var fps = 60;
 var timeToFall = 3;
 var bands = [bandsCount];
 
+var compGlobal, compLocal;
+var transientSettings = { attack: 0.098, transientLength: 0.648, threshold: 4, localRelease: 0.0, bandF: 500, bandQ: 0}
+var comp_global_attack = 0.01, 
+    comp_global_release = 0.01; 
+    comp_global_thresshold = -100, 
+    comp_global_ratio = 12;
+var comp_local_attack = 0.00,
+    comp_local_release = 0.0, 
+    comp_local_thresshold = -100, 
+    comp_local_ratio = 12;
+var gui = new dat.GUI();
+
+function getTransientSharper(){
+    
+}
 window.onload = function () {
      
     //initalization
     var context = new AudioContext();
 
     var request = new XMLHttpRequest();
-    request.open('GET', "sounds/lied2.mpeg", true);
+    request.open('GET', "sounds/DebugScale.mp3", true);
     request.responseType = 'arraybuffer';
 
     var testAudio = context.createBufferSource();
@@ -22,20 +37,20 @@ window.onload = function () {
     };
 
     // create compresors
-    var compressorSlow = context.createDynamicsCompressor();
-    compressorSlow.threshold.setValueAtTime(-50, context.currentTime);
-    compressorSlow.knee.setValueAtTime(40, context.currentTime);
-    compressorSlow.ratio.setValueAtTime(12, context.currentTime);
-    compressorSlow.attack.setValueAtTime(1, context.currentTime);
-    compressorSlow.release.setValueAtTime(0.25, context.currentTime);
+    compGlobal = context.createDynamicsCompressor();
+    compLocal = context.createDynamicsCompressor();
+    gui.add(transientSettings, 'attack').min(0.001).max(0.2);
+    gui.add(transientSettings, 'transientLength').min(0.001).max(1.5);
+    gui.add(transientSettings, 'localRelease').min(0.000).max(0.001);
+    gui.add(transientSettings, 'threshold').min(0.2).max(6);
+    gui.add(transientSettings, 'bandF').min(20).max(20000);
+    gui.add(transientSettings, 'bandQ').min(0,).max(50);
 
-    var compressorFast = context.createDynamicsCompressor();
-    compressorFast.threshold.setValueAtTime(-50, context.currentTime);
-    compressorFast.knee.setValueAtTime(40, context.currentTime);
-    compressorFast.ratio.setValueAtTime(999, context.currentTime);
-    compressorFast.attack.setValueAtTime(0, context.currentTime);
-    compressorFast.release.setValueAtTime(0.01, context.currentTime);
+    var gainByTransient = context.createGain();
+    gainByTransient.gain.value = 0;
 
+    var bandPass = context.createBiquadFilter();
+    bandPass.type = "bandpass";
     // create debug OSC
     var osc0 = context.createOscillator();
     var gain = context.createGain();
@@ -60,11 +75,14 @@ window.onload = function () {
     var canvasCtx, canvas, outText;
     function OnLoadFinished(){
 
-        testAudio.connect(compressorSlow);
-        testAudio.connect(compressorFast);        
+        testAudio.connect(bandPass);
+        testAudio.connect(context.destination);
+        bandPass.connect(compGlobal);
+        bandPass.connect(compLocal);        
         testAudio.connect(analyser);
         analyser.connect(delay);
-        delay.connect(context.destination);
+       // compGlobal.connect(context.destination);
+       // gainByTransient.connect(context.destination);
         testAudio.start(context.currentTime);
         
         // Get a canvas defined with ID "oscilloscope"
@@ -77,30 +95,51 @@ window.onload = function () {
         draw();
     }
 
-    // var dpsFast = [], dpsSlow = []; // dataPoints
-    // var xVal = 0;
-        
-    // var chart = new CanvasJS.Chart("chartContainer", {
-    //     title :{
-    //         text: "Dynamic Data"
-    //     },
-    //     axisY: {
-    //         includeZero: false
-    //     },      
-    //     data: [
-    //         {
-    //             type: "line",
-    //             dataPoints: dpsFast
-    //         },
-    //         {
-    //             type: "line",
-    //             dataPoints: dpsSlow
-    //         },
-    //     ]
-    // });
+    function updateCompressorValues() {
+    
+        compGlobal.attack.setValueAtTime(transientSettings.attack, context.currentTime);
+        compGlobal.release.setValueAtTime(transientSettings.transientLength, context.currentTime);
+        compGlobal.threshold.setValueAtTime(comp_global_thresshold, context.currentTime);
+        compGlobal.ratio.setValueAtTime(comp_global_ratio, context.currentTime);
 
+        compLocal.attack.setValueAtTime(comp_local_attack, context.currentTime);
+        compLocal.release.setValueAtTime(transientSettings.localRelease, context.currentTime);
+        compLocal.threshold.setValueAtTime(comp_local_thresshold, context.currentTime);
+        compLocal.ratio.setValueAtTime(comp_local_ratio, context.currentTime);
+
+        bandPass.frequency.value = transientSettings.bandF;
+        bandPass.Q.value = transientSettings.bandQ;
+    }
+
+    var dpsFast = [], dpsSlow = [], dpsTrans = []; // dataPoints
+    var xVal = 0;
+        
+    var chart = new CanvasJS.Chart("chartContainer", {
+        title :{
+            text: "Dynamic Data"
+        },
+        axisY: {
+            includeZero: false
+        },      
+        data: [
+            {
+                type: "line",
+                dataPoints: dpsFast
+            },
+            {
+                type: "line",
+                dataPoints: dpsSlow
+            },
+            {
+                type: "line",
+                dataPoints: dpsTrans
+            },
+        ]
+    });
+
+    var transientLevel = 0;
     function LogCompressor() {
-        var transientLevel = Math.abs(compressorSlow.reduction - compressorFast.reduction);
+        transientLevel = ( compLocal.reduction - compGlobal.reduction);
         if(transientLevel > 13.0) {
             //console.log("TRANSIENT!" + transientLevel);
             
@@ -109,25 +148,26 @@ window.onload = function () {
         }
 
         xVal++;
-        dpsFast.push({x: xVal, y: compressorSlow.reduction});
-        dpsSlow.push({x: xVal, y: compressorFast.reduction});
-        if (dpsFast.length > 400) {
+        dpsFast.push({x: xVal, y: compGlobal.reduction});
+        dpsSlow.push({x: xVal, y: compLocal.reduction});
+        // dpsTrans.push({x: xVal, y: transientLevel > transientSettings.threshold ? -40 : -80});
+        dpsTrans.push({x: xVal, y: transientLevel });
+        if (dpsFast.length > 360) {
             dpsFast.shift();
             dpsSlow.shift();
+            dpsTrans.shift();
         }
-    
-        chart.render();
+        gainByTransient.gain.value = Math.min(1, Math.max(0, transientLevel));
+        // chart.render();
         
     }
-
-
-
+    
     function draw() {
 
         requestAnimationFrame(draw);
+        updateCompressorValues();
       
- 
-        //LogCompressor();
+        LogCompressor();
         analyser.getByteFrequencyData(dataArray);
       
         // canvasCtx.fillStyle = "rgb(200, 200, 200)";
@@ -146,8 +186,6 @@ window.onload = function () {
             
             const i01 = i / bandsCount;
             const i01Plus1 = (i + 1) / bandsCount;
-            const startHz = Math.log2(i01 * maxFFTFreq);
-            const endHz = Math.log2(i01Plus1 * maxFFTFreq);
             //const varsPerBands = Math.floor(bufferLength * ((Math.log2(i + 3) / 8.499)));
             const varsPerBands = Math.round(bufferLength / (2*bandsCount));
             console.log(varsPerBands);
@@ -163,25 +201,21 @@ window.onload = function () {
             average /= (end - start);
             bands[i] = average;
         }
-        /*
-        band0 = Math.log10(bands[0]);
-        band1 = Math.log10(bands[1]);
-        band2 = Math.log10(bands[2]);
-        band3 = Math.log10(bands[3]);
-        */
+
         band0 = bands[0];
         band1 = bands[1];
         band2 = bands[2];
         band3 = bands[3];
+        bands[0] = bands[1] = bands[2] = bands[3] = transientLevel > 0 ? 1 : 0;
+        bands[0] = transientLevel > 0;
         
-        var av = band0 + band1 + band2 + band3;
-        av = av / 4;
-        console.log(parseFloat(Math.round(band0 * 100) / 100).toFixed(2) + "," + parseFloat(Math.round(band1 * 100) / 100).toFixed(2) + "," + parseFloat(Math.round(band2 * 100) / 100).toFixed(2) + "," + parseFloat(Math.round(band3 * 100) / 100).toFixed(2) + "," + parseFloat(Math.round(av * 100) / 100).toFixed(2));
-        bands[0] = band0 > av * document.getElementById("myRange0").value;
-        bands[1] = band1 > av * document.getElementById("myRange1").value;
-        bands[2] = band2 > av * document.getElementById("myRange2").value;
-        bands[3] = band3 > av * document.getElementById("myRange3").value;
-        console.log(document.getElementById("myRange0").value + "," + document.getElementById("myRange1").value + "," + document.getElementById("myRange2").value + "," + document.getElementById("myRange3").value)
+     
+        // console.log(parseFloat(Math.round(band0 * 100) / 100).toFixed(2) + "," + parseFloat(Math.round(band1 * 100) / 100).toFixed(2) + "," + parseFloat(Math.round(band2 * 100) / 100).toFixed(2) + "," + parseFloat(Math.round(band3 * 100) / 100).toFixed(2) + "," + parseFloat(Math.round(av * 100) / 100).toFixed(2));
+        // bands[0] = band0 > av * document.getElementById("myRange0").value;
+        // bands[1] = band1 > av * document.getElementById("myRange1").value;
+        // bands[2] = band2 > av * document.getElementById("myRange2").value;
+        // bands[3] = band3 > av * document.getElementById("myRange3").value;
+        // console.log(document.getElementById("myRange0").value + "," + document.getElementById("myRange1").value + "," + document.getElementById("myRange2").value + "," + document.getElementById("myRange3").value)
 
         //console.log(bands[3]);
         //TODO: schwellwert adaptive machen
@@ -192,7 +226,6 @@ window.onload = function () {
         bands[3] = bands[3] > 50;
         */
         
-
         step(bands);
 
         // var sliceWidth = canvas.width * 1.0 / bandsCount;
