@@ -1,4 +1,6 @@
 const bandsCount = 4;
+var fps = 60;
+var timeToFall = 3;
 var bands = [bandsCount];
 
 window.onload = function () {
@@ -51,14 +53,18 @@ window.onload = function () {
     var bufferLength = analyser.frequencyBinCount;
     var dataArray = new Uint8Array(bufferLength);
     analyser.getByteTimeDomainData(dataArray);
+
+    var delay = context.createDelay(timeToFall);
+    delay.delayTime.value = timeToFall;
  
     var canvasCtx, canvas, outText;
     function OnLoadFinished(){
 
         testAudio.connect(compressorSlow);
-        testAudio.connect(compressorFast);
-        testAudio.connect(context.destination);
+        testAudio.connect(compressorFast);        
         testAudio.connect(analyser);
+        analyser.connect(delay);
+        delay.connect(context.destination);
         testAudio.start(context.currentTime);
         
         // Get a canvas defined with ID "oscilloscope"
@@ -66,7 +72,8 @@ window.onload = function () {
         // canvasCtx = canvas.getContext("2d");
 
         // outText = document.getElementById("notes");
-        start(4, 60, 5);
+
+        start(bandsCount, fps, timeToFall);
         draw();
     }
 
@@ -134,14 +141,16 @@ window.onload = function () {
         //split into 4 bands
 
         const maxFFTFreq = 44100 / 2.0;
-        const varsPerBands = bufferLength / bandsCount;
+        
         for (let i = 0; i < bandsCount; i++) {
             
             const i01 = i / bandsCount;
             const i01Plus1 = (i + 1) / bandsCount;
             const startHz = Math.log2(i01 * maxFFTFreq);
             const endHz = Math.log2(i01Plus1 * maxFFTFreq);
-
+            //const varsPerBands = Math.floor(bufferLength * ((Math.log2(i + 3) / 8.499)));
+            const varsPerBands = Math.round(bufferLength / (2*bandsCount));
+            console.log(varsPerBands);
             const start = i * varsPerBands;
             const end = (i + 1) * varsPerBands;
 
@@ -154,13 +163,35 @@ window.onload = function () {
             average /= (end - start);
             bands[i] = average;
         }
-    
+        /*
+        band0 = Math.log10(bands[0]);
+        band1 = Math.log10(bands[1]);
+        band2 = Math.log10(bands[2]);
+        band3 = Math.log10(bands[3]);
+        */
+        band0 = bands[0];
+        band1 = bands[1];
+        band2 = bands[2];
+        band3 = bands[3];
+        
+        var av = band0 + band1 + band2 + band3;
+        av = av / 4;
+        console.log(parseFloat(Math.round(band0 * 100) / 100).toFixed(2) + "," + parseFloat(Math.round(band1 * 100) / 100).toFixed(2) + "," + parseFloat(Math.round(band2 * 100) / 100).toFixed(2) + "," + parseFloat(Math.round(band3 * 100) / 100).toFixed(2) + "," + parseFloat(Math.round(av * 100) / 100).toFixed(2));
+        bands[0] = band0 > av * document.getElementById("myRange0").value;
+        bands[1] = band1 > av * document.getElementById("myRange1").value;
+        bands[2] = band2 > av * document.getElementById("myRange2").value;
+        bands[3] = band3 > av * document.getElementById("myRange3").value;
+        console.log(document.getElementById("myRange0").value + "," + document.getElementById("myRange1").value + "," + document.getElementById("myRange2").value + "," + document.getElementById("myRange3").value)
+
+        //console.log(bands[3]);
         //TODO: schwellwert adaptive machen
+        /*
         bands[0] = bands[0] > 125;
         bands[1] = bands[1] > 110;
         bands[2] = bands[2] > 80;
-        bands[3] = bands[3] > 74;
-       // console.log(bands[3]);
+        bands[3] = bands[3] > 50;
+        */
+        
 
         step(bands);
 

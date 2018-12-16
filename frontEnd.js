@@ -40,7 +40,7 @@ function createBlocksFromInput()
 {
     var newNote = false;
     input.forEach(function (value, index) {
-        if (value != 0) {
+        if (value) {
             if (lastInput[index] == 0) {
                 newNote = true;
                 createNewBlock(index);
@@ -89,7 +89,7 @@ function createNewBlock(noteIndex)
 function backGroundBeat() {
     document.getElementById("noteArea").style.backgroundImage = "linear-gradient(#386,#321 75%)"
 }
-
+/*
 document.addEventListener('keydown', function (event) {
     if (event.key == 'q') {
         input[0] = 1;
@@ -119,3 +119,4 @@ document.addEventListener('keyup', function (event) {
         input[3] = 0;
     }
 });
+*/
