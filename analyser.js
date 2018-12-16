@@ -87,7 +87,9 @@ window.onload = function () {
             // gui.add(transientSettings, 'threshold').min(0.2).max(6);
             transDec.guiFolder.add(transientSettings, 'bandF').min(20).max(20000);
             transDec.guiFolder.add(transientSettings, 'bandQ').min(0,).max(50);
+            // transDec.guiFolder.add()
             transDec.settings = transientSettings;
+
 
 
             return transDec;
