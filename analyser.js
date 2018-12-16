@@ -1,3 +1,4 @@
+// hey there!
 const bandsCount = 4;
 var fps = 60;
 var timeToFall = 3;
@@ -15,16 +16,14 @@ var comp_local_attack = 0.00,
     comp_local_ratio = 12;
 var gui = new dat.GUI();
 
-function getTransientSharper(){
 
-}
 window.onload = function () {
      
     //initalization
     var context = new AudioContext();
 
     var request = new XMLHttpRequest();
-    request.open('GET', "sounds/DebugScale.mp3", true);
+    request.open('GET', "sounds/Daft Punk - HarderBetter Faster Stronger Remix.mp3", true);
     request.responseType = 'arraybuffer';
 
     var testAudio = context.createBufferSource();
@@ -36,21 +35,6 @@ window.onload = function () {
         });
     };
 
-    // create compresors
-    compGlobal = context.createDynamicsCompressor();
-    compLocal = context.createDynamicsCompressor();
-    gui.add(transientSettings, 'attack').min(0.001).max(0.2);
-    gui.add(transientSettings, 'transientLength').min(0.001).max(1.5);
-    gui.add(transientSettings, 'localRelease').min(0.000).max(0.001);
-    gui.add(transientSettings, 'threshold').min(0.2).max(6);
-    gui.add(transientSettings, 'bandF').min(20).max(20000);
-    gui.add(transientSettings, 'bandQ').min(0,).max(50);
-
-    var gainByTransient = context.createGain();
-    gainByTransient.gain.value = 0;
-
-    var bandPass = context.createBiquadFilter();
-    bandPass.type = "bandpass";
     // create debug OSC
     var osc0 = context.createOscillator();
     var gain = context.createGain();
@@ -73,12 +57,49 @@ window.onload = function () {
     delay.delayTime.value = timeToFall;
  
     var canvasCtx, canvas, outText;
+    var transDectBands = [];
     function OnLoadFinished(){
 
-        testAudio.connect(bandPass);
-        testAudio.connect(context.destination);
-        bandPass.connect(compGlobal);
-        bandPass.connect(compLocal);        
+        function createTransientDetector(name, bandFreq, bandQ){
+            var transDec = [];
+            transDec.compLocal = context.createDynamicsCompressor();
+            transDec.compGlobal = context.createDynamicsCompressor();
+            transDec.bandpassFilter = context.createBiquadFilter();
+            transDec.bandpassFilter.type = "bandpass";
+
+            testAudio.connect(transDec.bandpassFilter);
+            transDec.bandpassFilter.connect(transDec.compGlobal);
+            transDec.bandpassFilter.connect(transDec.compLocal);
+
+            transDec.guiFolder = gui.addFolder(name);
+
+            // default settings
+            var transientSettings = { 
+                attack: 0.083, 
+                transientLength: 0.7, 
+                threshold: 4, 
+                localRelease: 0.0006, 
+                bandF: bandFreq, 
+                bandQ: bandQ};
+            transDec.guiFolder.add(transientSettings, 'attack').min(0.001).max(0.2);
+            transDec.guiFolder.add(transientSettings, 'transientLength').min(0.001).max(1.5);
+            transDec.guiFolder.add(transientSettings, 'localRelease').min(0.000).max(0.001);
+            // gui.add(transientSettings, 'threshold').min(0.2).max(6);
+            transDec.guiFolder.add(transientSettings, 'bandF').min(20).max(20000);
+            transDec.guiFolder.add(transientSettings, 'bandQ').min(0,).max(50);
+            transDec.settings = transientSettings;
+
+
+            return transDec;
+        }
+        transDectBands[0] = createTransientDetector("band0", 250, 10);
+        transDectBands[1] = createTransientDetector("band1", 1500, 8);
+        transDectBands[2] = createTransientDetector("band2", 3000, 6);
+        transDectBands[3] = createTransientDetector("band3", 6000, 5);
+
+        
+
+        testAudio.connect(context.destination);       
         testAudio.connect(analyser);
         analyser.connect(delay);
        // compGlobal.connect(context.destination);
@@ -95,20 +116,21 @@ window.onload = function () {
         draw();
     }
 
-    function updateCompressorValues() {
+
+    function updateCompressorValues(transDec) {
     
-        compGlobal.attack.setValueAtTime(transientSettings.attack, context.currentTime);
-        compGlobal.release.setValueAtTime(transientSettings.transientLength, context.currentTime);
-        compGlobal.threshold.setValueAtTime(comp_global_thresshold, context.currentTime);
-        compGlobal.ratio.setValueAtTime(comp_global_ratio, context.currentTime);
+        transDec.compGlobal.attack.setValueAtTime(transDec.settings.attack, context.currentTime);
+        transDec.compGlobal.release.setValueAtTime(transDec.settings.transientLength, context.currentTime);
+        transDec.compGlobal.threshold.setValueAtTime(comp_global_thresshold, context.currentTime);
+        transDec.compGlobal.ratio.setValueAtTime(comp_global_ratio, context.currentTime);
 
-        compLocal.attack.setValueAtTime(comp_local_attack, context.currentTime);
-        compLocal.release.setValueAtTime(transientSettings.localRelease, context.currentTime);
-        compLocal.threshold.setValueAtTime(comp_local_thresshold, context.currentTime);
-        compLocal.ratio.setValueAtTime(comp_local_ratio, context.currentTime);
+        transDec.compLocal.attack.setValueAtTime(comp_local_attack, context.currentTime);
+        transDec.compLocal.release.setValueAtTime(transDec.settings.localRelease, context.currentTime);
+        transDec.compLocal.threshold.setValueAtTime(comp_local_thresshold, context.currentTime);
+        transDec.compLocal.ratio.setValueAtTime(comp_local_ratio, context.currentTime);
 
-        bandPass.frequency.value = transientSettings.bandF;
-        bandPass.Q.value = transientSettings.bandQ;
+        transDec.bandpassFilter.frequency.value = transDec.settings.bandF;
+        transDec.bandpassFilter.Q.value = transDec.settings.bandQ;
     }
 
     var dpsFast = [], dpsSlow = [], dpsTrans = []; // dataPoints
@@ -138,7 +160,13 @@ window.onload = function () {
     });
 
     var transientLevel = 0;
-    function LogCompressor() {
+    function GetTransientLevel(transDec){
+        return transDec.compLocal.reduction - transDec.compGlobal.reduction;
+    }
+    function UpdateTransientDetectors() {
+        return;
+
+
         transientLevel = ( compLocal.reduction - compGlobal.reduction);
         if(transientLevel > 13.0) {
             //console.log("TRANSIENT!" + transientLevel);
@@ -152,22 +180,27 @@ window.onload = function () {
         dpsSlow.push({x: xVal, y: compLocal.reduction});
         // dpsTrans.push({x: xVal, y: transientLevel > transientSettings.threshold ? -40 : -80});
         dpsTrans.push({x: xVal, y: transientLevel });
-        if (dpsFast.length > 360) {
+        if (dpsFast.length > 180) {
             dpsFast.shift();
             dpsSlow.shift();
             dpsTrans.shift();
         }
         gainByTransient.gain.value = Math.min(1, Math.max(0, transientLevel));
-        // chart.render();
+      //   chart.render();
         
     }
-    
+
+
     function draw() {
 
         requestAnimationFrame(draw);
-        updateCompressorValues();
+        updateCompressorValues(transDectBands[0]);
+        updateCompressorValues(transDectBands[1]);
+        updateCompressorValues(transDectBands[2]);
+        updateCompressorValues(transDectBands[3]);
+
       
-        LogCompressor();
+        UpdateTransientDetectors();
         analyser.getByteFrequencyData(dataArray);
       
         // canvasCtx.fillStyle = "rgb(200, 200, 200)";
@@ -188,7 +221,7 @@ window.onload = function () {
             const i01Plus1 = (i + 1) / bandsCount;
             //const varsPerBands = Math.floor(bufferLength * ((Math.log2(i + 3) / 8.499)));
             const varsPerBands = Math.round(bufferLength / (2*bandsCount));
-            console.log(varsPerBands);
+            // console.log(varsPerBands);
             const start = i * varsPerBands;
             const end = (i + 1) * varsPerBands;
 
@@ -206,9 +239,13 @@ window.onload = function () {
         band1 = bands[1];
         band2 = bands[2];
         band3 = bands[3];
-        bands[0] = bands[1] = bands[2] = bands[3] = transientLevel > 0 ? 1 : 0;
-        bands[0] = transientLevel > 0;
-        
+        // bands[0] = bands[1] = bands[2] = bands[3] = transientLevel > 0 ? 1 : 0;
+        // bands[0] = transientLevel > 0;
+        bands[0] = GetTransientLevel(transDectBands[0]) > 0;
+        bands[1] = GetTransientLevel(transDectBands[1]) > 0;  
+        bands[2] = GetTransientLevel(transDectBands[2]) > 0;  
+        bands[3] = GetTransientLevel(transDectBands[3]) > 0;  
+
      
         // console.log(parseFloat(Math.round(band0 * 100) / 100).toFixed(2) + "," + parseFloat(Math.round(band1 * 100) / 100).toFixed(2) + "," + parseFloat(Math.round(band2 * 100) / 100).toFixed(2) + "," + parseFloat(Math.round(band3 * 100) / 100).toFixed(2) + "," + parseFloat(Math.round(av * 100) / 100).toFixed(2));
         // bands[0] = band0 > av * document.getElementById("myRange0").value;
