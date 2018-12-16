@@ -4,7 +4,7 @@ var timeToFall = 3;
 var bands = [bandsCount];
 
 var compGlobal, compLocal;
-var transientSettings = { attack: 0.098, transientLength: 0.648, threshold: 4, localRelease: 0.0, bandF: 500, bandQ: 0}
+var transientSettings = { attack: 0.083, transientLength: 0.7, threshold: 4, localRelease: 0.0006, bandF: 500, bandQ: 0}
 var comp_global_attack = 0.01, 
     comp_global_release = 0.01; 
     comp_global_thresshold = -100, 
@@ -16,7 +16,7 @@ var comp_local_attack = 0.00,
 var gui = new dat.GUI();
 
 function getTransientSharper(){
-    
+
 }
 window.onload = function () {
      
