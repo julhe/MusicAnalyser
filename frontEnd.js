@@ -5,6 +5,8 @@ var fps = 60;
 var topNoteBlocks = new Array(numberOfDifferentNotes);
 var fallDownSpeed = 5;
 var blocks;
+var timeLastBlockAppeared = [0,0,0,0];
+var minTimeForNewBlock = 500;
 
 function start(numberOfNotes, targetFPS, timeToFall)
 {
@@ -15,8 +17,9 @@ function start(numberOfNotes, targetFPS, timeToFall)
 
 function step(inputArray) {
     input = inputArray;
+    requestAnimationFrame(step);
     createBlocksFromInput();
-    moveBlocks();
+    
 }
 function moveBlocks() {
     blocks = document.getElementById("noteArea").childNodes;
@@ -34,39 +37,49 @@ function moveBlocks() {
         child.style.top = newTop;
         child.style.bottom = newBottom;       
     })
+    
 }
 
 function createBlocksFromInput()
 {
+    var d = new Date();
     var newNote = false;
     input.forEach(function (value, index) {
+        console.log(d.getTime() - timeLastBlockAppeared[index]);
         if (value) {
-            if (lastInput[index] == 0) {
-                newNote = true;
-                createNewBlock(index);
-            }
-            if (value == lastInput[index]) {
-                elongateTopNote(index);
-            }            
+            if(d.getTime() - timeLastBlockAppeared[index] >= minTimeForNewBlock){
+                if (lastInput[index] == 0) {
+                    newNote = true;
+                    timeLastBlockAppeared[index] = d.getTime();
+                    createNewBlock(index);
+                }
+                else if (value != 0){
+                    elongateTopNote(index);
+                }
+            }         
+        }
+        if(d.getTime() - timeLastBlockAppeared[index] < minTimeForNewBlock){
+            elongateTopNote(index);
         }
         lastInput[index] = value;
     })
     if (newNote) {
         backGroundBeat();
     }
-    else {
-        document.getElementById("noteArea").style.backgroundImage = "linear-gradient(#375,#210 75%)"
-    }
+    moveBlocks();
 }
 
 function elongateTopNote(noteIndex)
 {
-    var rect = topNoteBlocks[noteIndex].getBoundingClientRect();
-    var newTop = - fallDownSpeed;
-    //var newBottom = document.getElementById("noteArea").getBoundingClientRect().bottom - fallDownSpeed - rect.bottom;
-    //console.log(rect.top + " , " + newBottom);
-    topNoteBlocks[noteIndex].style.top = newTop;
-    //topNoteBlocks[noteIndex].style.bottom = newBottom;
+    if(topNoteBlocks[noteIndex]){
+        var rect = topNoteBlocks[noteIndex].getBoundingClientRect();
+        var newTop = - fallDownSpeed;
+        //var newBottom = document.getElementById("noteArea").getBoundingClientRect().bottom - fallDownSpeed - rect.bottom;
+        //console.log(rect.top + " , " + newBottom);
+        topNoteBlocks[noteIndex].style.top = newTop;
+        //topNoteBlocks[noteIndex].style.bottom = newBottom;
+    }
+    
 }
 
 function createNewBlock(noteIndex)
@@ -87,8 +100,9 @@ function createNewBlock(noteIndex)
 }
 
 function backGroundBeat() {
-    document.getElementById("noteArea").style.backgroundImage = "linear-gradient(#386,#321 75%)"
+    //document.getElementById("noteArea").style.backgroundImage = "linear-gradient(#386,#321 75%)"
 }
+
 /*
 document.addEventListener('keydown', function (event) {
     if (event.key == 'q') {
