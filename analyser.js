@@ -129,7 +129,7 @@ window.onload = function () {
         testAudio.connect(songGain);    
         songGain.connect(delay);
         delay.connect(context.destination);
-        testAudio.play();   
+        testAudio.start(0,0);   
         //testAudio.connect(analyser);
       //  analyser.connect(delay);
        // compGlobal.connect(context.destination);
