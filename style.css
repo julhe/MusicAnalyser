@@ -35,7 +35,7 @@ html, body {
     background-image: linear-gradient(#FF0000 15%, #FF6262 85%);
 }
 
-.destroyed{
+#destroyed{
     border-radius: 5%;
     margin-top: 0;
     top: 0;

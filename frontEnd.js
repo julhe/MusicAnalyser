@@ -117,10 +117,11 @@ function pressButtonsFromUserInput(){
         else{
             noteKey.style.backgroundImage = "linear-gradient(#FF1800 80%, #FF7C00 95%)";
             if(userInputs != lastUserInputs){
-                var hitDiv = document.elementFromPoint(noteKey.getBoundingClientRect().x + noteKey.getBoundingClientRect().width/2,noteKey.getBoundingClientRect().top - 15);
+                var hitDiv = document.elementFromPoint(noteKey.getBoundingClientRect().x + noteKey.getBoundingClientRect().width/2,noteKey.getBoundingClientRect().top - 5);
                 if(hitDiv.className == "block"){
                     console.log(noteKey.getBoundingClientRect().x + noteKey.getBoundingClientRect().width/2);
-                    hitDiv.className = "destroyed";
+                    hitDiv.id = "destroyed";
+
                 }
             }
         }
