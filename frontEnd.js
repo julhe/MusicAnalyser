@@ -17,7 +17,6 @@ function start(numberOfNotes, targetFPS, timeToFall)
 
 function step(inputArray) {
     input = inputArray;
-    //requestAnimationFrame(step);
     createBlocksFromInput();
     
 }
@@ -45,7 +44,6 @@ function createBlocksFromInput()
     var d = new Date();
     var newNote = false;
     input.forEach(function (value, index) {
-        console.log(d.getTime() - timeLastBlockAppeared[index]);
         if (value) {
             if(d.getTime() - timeLastBlockAppeared[index] >= minTimeForNewBlock){
                 if (lastInput[index] == 0) {
