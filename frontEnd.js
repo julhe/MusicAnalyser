@@ -10,6 +10,7 @@ var minTimeForNewBlock = 250;
 var userInputs = new Uint16Array(numberOfDifferentNotes);
 var lastUserInputs = new Uint16Array(numberOfDifferentNotes);
 var keyColors = ["","","",""];
+var points = 0;
 function start(numberOfNotes, targetFPS, timeToFall)
 {
     numberOfDifferentNotes = numberOfNotes;
@@ -26,6 +27,7 @@ function step(inputArray) {
     createBlocksFromInput();
     moveBlocks();
     pressButtonsFromUserInput();
+    fadeHitBlocks();
 }
 function moveBlocks() {
     blocks = document.getElementById("noteArea").childNodes;
@@ -117,19 +119,34 @@ function pressButtonsFromUserInput(){
         else{
             noteKey.style.backgroundImage = "linear-gradient(#FF1800 80%, #FF7C00 95%)";
             if(userInputs[index] != lastUserInputs[index]){
-                console.log("ping");
                 var hitDiv = document.elementFromPoint(noteKey.getBoundingClientRect().x + noteKey.getBoundingClientRect().width/2,noteKey.getBoundingClientRect().top - 5);
                 if(hitDiv.className == "block"){
-                    console.log(noteKey.getBoundingClientRect().x + noteKey.getBoundingClientRect().width/2);
                     hitDiv.id = "destroyed";
-
+                    hitDiv.className = "destroyed";
+                    var hitBlock = "hitBlock" + index;
+                    document.getElementById(hitBlock).style.opacity = ".75";
+                    points += 100;
+                }
+                else{
+                    points -= 50;
                 }
             }
             
         }
+        console.log("Points: " + points);
         lastUserInputs[index] = userInputs[index];
     });
 
+}
+
+function fadeHitBlocks(){
+    for(var i = 0; i < numberOfDifferentNotes; i++){
+        var hitBlock = "hitBlock" + i;
+        if(document.getElementById(hitBlock).style.opacity > 0){
+            document.getElementById(hitBlock).style.opacity = " " + (document.getElementById(hitBlock).style.opacity - .03);
+
+        }
+    }
 }
 
 
