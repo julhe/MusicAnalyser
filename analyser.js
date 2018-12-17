@@ -145,7 +145,9 @@ window.onload = function () {
         draw();
     }
 
-   
+   function isNumberEqual(num1, num2) {
+       return Math.abs(num1 - num2) <= 1.0;
+   }
 
 
     function updateCompressorValues(transDec) {
@@ -164,6 +166,9 @@ window.onload = function () {
         transDec.bandpassFilter.Q.value = transDec.settings.bandQ;
 
         transDec.results.transientLevel = (transDec.compLocal.reduction - transDec.compGlobal.reduction);
+        if(isNumberEqual(transDec.compGlobal.reduction, 0)) {
+            transDec.results.transientLevel = -1;
+        }
         transDec.debugGain.gain.setValueAtTime(transDec.settings.bandToMaster, context.currentTime);
     }
 
