@@ -50,3 +50,34 @@ html, body {
     bottom: 0;
     display:inline-block
 }
+
+.key{
+    border-radius: 5%;
+    margin-top: 0;
+    width: 12.5%;
+    bottom: 0;
+    position: absolute;
+    z-index: 9999;
+    height: 50;
+}
+
+#key0{
+    background-image: linear-gradient(#ffffff 80%, #999999 95%);
+    
+
+}
+#key1{
+    background-image: linear-gradient(#ffffff 1%, #222222 15%);
+    left: 12.5%;
+}
+#key2{
+    background-image: linear-gradient(#ffffff 80%, #999999 95%);
+    
+    left: 25%;
+
+}
+#key3{
+    background-image: linear-gradient(#ffffff 1%, #222222 15%);
+    left: 37.5%;
+
+}
