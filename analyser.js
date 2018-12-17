@@ -28,7 +28,7 @@ window.onload = function () {
    
 
     var request = new XMLHttpRequest();
-    request.open('GET', "sounds/AllesWirdDerKripoGemeldet.mp3", true);
+    request.open('GET', "sounds/Daft Punk - HarderBetter Faster Stronger Remix.mp3", true);
     request.responseType = 'arraybuffer';
 
     request.onload = function () {
