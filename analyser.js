@@ -28,7 +28,7 @@ window.onload = function () {
    
 
     var request = new XMLHttpRequest();
-    request.open('GET', "sounds/Daft Punk - HarderBetter Faster Stronger Remix.mp3", true);
+    request.open('GET', "sounds/AllesWirdDerKripoGemeldet.mp3", true);
     request.responseType = 'arraybuffer';
 
     request.onload = function () {
@@ -121,14 +121,14 @@ window.onload = function () {
             gui.remember(transientSettings);
             return transDec;
         }
-        transDectBands[0] = createTransientDetector("band0", 100, 5);
-        transDectBands[1] = createTransientDetector("band1", 2500, 8);
-        transDectBands[2] = createTransientDetector("band2", 4500, 4.5);
-        transDectBands[3] = createTransientDetector("band3", 6700, 2);
+        transDectBands[0] = createTransientDetector("band0", 80, 4);
+        transDectBands[1] = createTransientDetector("band1", 350, 4);
+        transDectBands[2] = createTransientDetector("band2", 3000, 2.5);
+        transDectBands[3] = createTransientDetector("band3", 7000, 2);
 
-        testAudio.connect(songGain);    
-        songGain.connect(delay);
-        delay.connect(context.destination);
+        testAudio.connect(delay);    
+        delay.connect(songGain);
+        songGain.connect(context.destination);
         testAudio.start(0,0);   
         //testAudio.connect(analyser);
       //  analyser.connect(delay);
