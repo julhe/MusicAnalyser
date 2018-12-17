@@ -116,7 +116,8 @@ function pressButtonsFromUserInput(){
         }
         else{
             noteKey.style.backgroundImage = "linear-gradient(#FF1800 80%, #FF7C00 95%)";
-            if(userInputs != lastUserInputs){
+            if(userInputs[index] != lastUserInputs[index]){
+                console.log("ping");
                 var hitDiv = document.elementFromPoint(noteKey.getBoundingClientRect().x + noteKey.getBoundingClientRect().width/2,noteKey.getBoundingClientRect().top - 5);
                 if(hitDiv.className == "block"){
                     console.log(noteKey.getBoundingClientRect().x + noteKey.getBoundingClientRect().width/2);
@@ -124,9 +125,11 @@ function pressButtonsFromUserInput(){
 
                 }
             }
+            
         }
+        lastUserInputs[index] = userInputs[index];
     });
-    LastUserInputs = userInputs;
+
 }
 
 
