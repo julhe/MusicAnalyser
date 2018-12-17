@@ -20,6 +20,7 @@ html, body {
     right: 0;
     bottom: 100%;
     position: absolute;
+    z-index: 9999;
 }
 
 #block0 {
