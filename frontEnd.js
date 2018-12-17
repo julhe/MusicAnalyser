@@ -6,19 +6,26 @@ var topNoteBlocks = new Array(numberOfDifferentNotes);
 var fallDownSpeed = 5;
 var blocks;
 var timeLastBlockAppeared = [0,0,0,0];
-var minTimeForNewBlock = 500;
-
+var minTimeForNewBlock = 250;
+var userInputs = new Uint16Array(numberOfDifferentNotes);
+var lastUserInputs = new Uint16Array(numberOfDifferentNotes);
+var keyColors = ["","","",""];
 function start(numberOfNotes, targetFPS, timeToFall)
 {
     numberOfDifferentNotes = numberOfNotes;
     fps = targetFPS;
-    fallDownSpeed = document.getElementById("noteArea").getBoundingClientRect().bottom/(timeToFall*fps);
+    fallDownSpeed = (document.getElementById("noteArea").getBoundingClientRect().bottom + 50)/(timeToFall*fps);
+    for(var i = 0; i < numberOfDifferentNotes; i++){
+        var keyId = "key" + i;
+        keyColors[i] = document.getElementById(keyId).style.backgroundImage;
+    }
 }
 
 function step(inputArray) {
     input = inputArray;
     createBlocksFromInput();
-    
+    moveBlocks();
+    pressButtonsFromUserInput();
 }
 function moveBlocks() {
     blocks = document.getElementById("noteArea").childNodes;
@@ -64,7 +71,6 @@ function createBlocksFromInput()
     if (newNote) {
         backGroundBeat();
     }
-    moveBlocks();
 }
 
 function elongateTopNote(noteIndex)
@@ -82,7 +88,6 @@ function elongateTopNote(noteIndex)
 
 function createNewBlock(noteIndex)
 {
-    console.log("newBlock");
     topNoteBlocks[noteIndex] = document.createElement("div");
     topNoteBlocks[noteIndex].id = "block" + noteIndex;
     topNoteBlocks[noteIndex].className = "block";
@@ -101,34 +106,55 @@ function backGroundBeat() {
     //document.getElementById("noteArea").style.backgroundImage = "linear-gradient(#386,#321 75%)"
 }
 
-/*
+function pressButtonsFromUserInput(){
+    userInputs.forEach(function (userInput, index) {
+        var keyId = "key" + index;
+        //console.log(keyId);
+        var noteKey = document.getElementById(keyId);
+        if(userInputs[index] == 0){
+            noteKey.style.backgroundImage = keyColors[index];
+        }
+        else{
+            noteKey.style.backgroundImage = "linear-gradient(#FF1800 80%, #FF7C00 95%)";
+            if(userInputs != lastUserInputs){
+                var hitDiv = document.elementFromPoint(noteKey.getBoundingClientRect().x + noteKey.getBoundingClientRect().width/2,noteKey.getBoundingClientRect().top - 15);
+                if(hitDiv.className == "block"){
+                    console.log(noteKey.getBoundingClientRect().x + noteKey.getBoundingClientRect().width/2);
+                    hitDiv.className = "destroyed";
+                }
+            }
+        }
+    });
+    LastUserInputs = userInputs;
+}
+
+
 document.addEventListener('keydown', function (event) {
     if (event.key == 'q') {
-        input[0] = 1;
+        userInputs[0] = 1;
     }
     if (event.key == 'w') {
-        input[1] = 1;
+        userInputs[1] = 1;
     }
     if (event.key == 'e') {
-        input[2] = 1;
+        userInputs[2] = 1;
     }
     if (event.key == 'r') {
-        input[3] = 1;
+        userInputs[3] = 1;
     }
 });
 
 document.addEventListener('keyup', function (event) {
     if (event.key == 'q') {
-        input[0] = 0;
+        userInputs[0] = 0;
     }
     if (event.key == 'w') {
-        input[1] = 0;
+        userInputs[1] = 0;
     }
     if (event.key == 'e') {
-        input[2] = 0;
+        userInputs[2] = 0;
     }
     if (event.key == 'r') {
-        input[3] = 0;
+        userInputs[3] = 0;
     }
 });
-*/

@@ -127,10 +127,9 @@ window.onload = function () {
         transDectBands[3] = createTransientDetector("band3", 6700, 2);
 
         testAudio.connect(songGain);    
-        songGain.connect(context.destination);
-        testAudio.start(0, 0);   
-       // testAudio.pause();
-
+        songGain.connect(delay);
+        delay.connect(context.destination);
+        testAudio.play();   
         //testAudio.connect(analyser);
       //  analyser.connect(delay);
        // compGlobal.connect(context.destination);
