@@ -34,13 +34,15 @@ window.onload = function () {
     request.onload = function () {
         var undecodedAudio = request.response;
         context.decodeAudioData(undecodedAudio, function (buffer) {
-            testAudio = createSound(buffer, context);         
+            testAudio = context.createBufferSource();
+            testAudio.buffer = buffer;        
             OnLoadFinished();
         });
     };
 
     var songGain = context.createGain();
     gui.add(globalSettings, "songGain",0.0, 1.0);
+    gui.remember(globalSettings);
     // create debug OSC
   
     var osc0 = context.createOscillator();
@@ -75,7 +77,7 @@ window.onload = function () {
             transDec.debugGain = context.createGain();
 
 
-            testAudio.sourceNode.connect(transDec.bandpassFilter);
+            testAudio.connect(transDec.bandpassFilter);
             transDec.bandpassFilter.connect(transDec.compGlobal);
             transDec.bandpassFilter.connect(transDec.compLocal);
             transDec.bandpassFilter.connect(transDec.debugGain);
@@ -108,15 +110,15 @@ window.onload = function () {
             transDec.guiFolder.add(transientSettings, 'transientLength').min(0.001).max(1.5);
             transDec.guiFolder.add(transientSettings, 'localRelease').min(0.000).max(0.001);
             // gui.add(transientSettings, 'threshold').min(0.2).max(6);
-            transDec.guiFolder.add(transientSettings, 'bandF').min(20).max(20000);
-            transDec.guiFolder.add(transientSettings, 'bandQ').min(0,).max(50);
+            transDec.guiFolder.add(transientSettings, 'bandF').min(20).max(10000);
+            transDec.guiFolder.add(transientSettings, 'bandQ').min(0,).max(8);
             transDec.guiFolder.add(transientSettings, 'bandToMaster', 0, 1);
             // transDec.guiFolder.add()
             transDec.settings = transientSettings;
             transDec.results = results;
 
 
-
+            gui.remember(transientSettings);
             return transDec;
         }
         transDectBands[0] = createTransientDetector("band0", 100, 5);
@@ -124,9 +126,11 @@ window.onload = function () {
         transDectBands[2] = createTransientDetector("band2", 4500, 4.5);
         transDectBands[3] = createTransientDetector("band3", 6700, 2);
 
-        testAudio.sourceNode.connect(songGain);    
+        testAudio.connect(songGain);    
         songGain.connect(context.destination);
-        testAudio.play();   
+        testAudio.start(0, 0);   
+       // testAudio.pause();
+
         //testAudio.connect(analyser);
       //  analyser.connect(delay);
        // compGlobal.connect(context.destination);
@@ -166,6 +170,7 @@ window.onload = function () {
 
     function updateGlobalValues(){
         songGain.gain.setValueAtTime(globalSettings.songGain, context.currentTime);
+
     }
 
     var dpsFast = [], dpsSlow = [], dpsTrans = []; // dataPoints
@@ -331,7 +336,7 @@ function createSound(buffer, context) {
 
     sourceNode = context.createBufferSource();
     sourceNode.buffer = buffer;
-    var play = function() {
+    var play = function(sound) {
         var offset = pausedAt;
         sourceNode.start(0, offset);
         startedAt = context.currentTime - offset;
@@ -347,9 +352,7 @@ function createSound(buffer, context) {
 
     var stop = function() {
         if (sourceNode) {          
-            sourceNode.disconnect();
             sourceNode.stop(0);
-            sourceNode = null;
         }
         pausedAt = 0;
         startedAt = 0;
