@@ -8,13 +8,13 @@ var blocks;
 var timeLastBlockAppeared = [0,0,0,0];
 var minTimeForNewBlock = 250;
 var userInputs = new Uint16Array(numberOfDifferentNotes);
-var LastUserInputs = new Uint16Array(numberOfDifferentNotes);
+var lastUserInputs = new Uint16Array(numberOfDifferentNotes);
 var keyColors = ["","","",""];
 function start(numberOfNotes, targetFPS, timeToFall)
 {
     numberOfDifferentNotes = numberOfNotes;
     fps = targetFPS;
-    fallDownSpeed = document.getElementById("noteArea").getBoundingClientRect().bottom/(timeToFall*fps);
+    fallDownSpeed = (document.getElementById("noteArea").getBoundingClientRect().bottom + 50)/(timeToFall*fps);
     for(var i = 0; i < numberOfDifferentNotes; i++){
         var keyId = "key" + i;
         keyColors[i] = document.getElementById(keyId).style.backgroundImage;
@@ -109,14 +109,23 @@ function backGroundBeat() {
 function pressButtonsFromUserInput(){
     userInputs.forEach(function (userInput, index) {
         var keyId = "key" + index;
-        console.log(keyId);
+        //console.log(keyId);
+        var noteKey = document.getElementById(keyId);
         if(userInputs[index] == 0){
-        document.getElementById(keyId).style.backgroundImage = keyColors[index];
+            noteKey.style.backgroundImage = keyColors[index];
         }
         else{
-        document.getElementById(keyId).style.backgroundImage = "linear-gradient(#FF1800 80%, #FF7C00 95%)";
+            noteKey.style.backgroundImage = "linear-gradient(#FF1800 80%, #FF7C00 95%)";
+            if(userInputs != lastUserInputs){
+                var hitDiv = document.elementFromPoint(noteKey.getBoundingClientRect().x + noteKey.getBoundingClientRect().width/2,noteKey.getBoundingClientRect().top - 15);
+                if(hitDiv.className == "block"){
+                    console.log(noteKey.getBoundingClientRect().x + noteKey.getBoundingClientRect().width/2);
+                    hitDiv.className = "destroyed";
+                }
+            }
         }
     });
+    LastUserInputs = userInputs;
 }
 
 
