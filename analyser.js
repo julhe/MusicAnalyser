@@ -274,7 +274,9 @@ window.onload = function () {
         bands[2] = Number(transDectBands[2].results.transientLevel > 0.0);
         bands[3] = Number(transDectBands[3].results.transientLevel > 0.0);
 
-     
+        bands.forEach(band => {
+            console.log(band);
+        });
         // console.log(parseFloat(Math.round(band0 * 100) / 100).toFixed(2) + "," + parseFloat(Math.round(band1 * 100) / 100).toFixed(2) + "," + parseFloat(Math.round(band2 * 100) / 100).toFixed(2) + "," + parseFloat(Math.round(band3 * 100) / 100).toFixed(2) + "," + parseFloat(Math.round(av * 100) / 100).toFixed(2));
         // bands[0] = band0 > av * document.getElementById("myRange0").value;
         // bands[1] = band1 > av * document.getElementById("myRange1").value;
@@ -291,7 +293,7 @@ window.onload = function () {
         bands[3] = bands[3] > 50;
         */
         
-        // step(bands);
+        step(bands);
 
         // var sliceWidth = canvas.width * 1.0 / bandsCount;
         // var x = 0;

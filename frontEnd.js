@@ -17,7 +17,7 @@ function start(numberOfNotes, targetFPS, timeToFall)
 
 function step(inputArray) {
     input = inputArray;
-    requestAnimationFrame(step);
+    //requestAnimationFrame(step);
     createBlocksFromInput();
     
 }
