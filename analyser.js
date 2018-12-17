@@ -111,7 +111,7 @@ window.onload = function () {
             transDec.guiFolder.add(transientSettings, 'localRelease').min(0.000).max(0.001);
             // gui.add(transientSettings, 'threshold').min(0.2).max(6);
             transDec.guiFolder.add(transientSettings, 'bandF').min(20).max(10000);
-            transDec.guiFolder.add(transientSettings, 'bandQ').min(0,).max(8);
+            transDec.guiFolder.add(transientSettings, 'bandQ').min(0,).max(25);
             transDec.guiFolder.add(transientSettings, 'bandToMaster', 0, 1);
             // transDec.guiFolder.add()
             transDec.settings = transientSettings;
@@ -121,7 +121,7 @@ window.onload = function () {
             gui.remember(transientSettings);
             return transDec;
         }
-        transDectBands[0] = createTransientDetector("band0", 80, 4);
+        transDectBands[0] = createTransientDetector("band0", 80, 8);
         transDectBands[1] = createTransientDetector("band1", 350, 4);
         transDectBands[2] = createTransientDetector("band2", 3000, 2.5);
         transDectBands[3] = createTransientDetector("band3", 7000, 2);
