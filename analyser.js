@@ -1,4 +1,4 @@
-const songPath = "sounds/MGMT - Little Dark Age (Official Video).mp3"
+const songName = "DebugScale.mp3"
 
 const bandsCount = 4;
 
@@ -8,11 +8,11 @@ var bands = [bandsCount];
 
 var comp_global_attack = 0.01, 
     comp_global_release = 0.01; 
-    comp_global_thresshold = -60, 
+    comp_global_thresshold = -30, 
     comp_global_ratio = 12;
 var comp_local_attack = 0.00,
     comp_local_release = 0.0, 
-    comp_local_thresshold = -60, 
+    comp_local_thresshold = -30, 
     comp_local_ratio = 12;
 var gui = new dat.GUI();
 
@@ -27,7 +27,7 @@ function Start(){
 
     //initalization
     var request = new XMLHttpRequest();
-    request.open('GET', songPath, true);
+    request.open('GET', "sounds/" + songName, true);
     request.responseType = 'arraybuffer';
 
     request.onload = function () {
@@ -94,7 +94,7 @@ function Start(){
             transDec.guiFolder.add(results, 'transientLevel', -2, 2).listen();
             transDec.guiFolder.add(transientSettings, 'bandToMaster', 0, 1);
             transDec.guiFolder.add(transientSettings, 'attack').min(0.001).max(0.2);
-            transDec.guiFolder.add(transientSettings, 'areaStartHz').min(50).max(5500);
+            transDec.guiFolder.add(transientSettings, 'areaStartHz').min(20).max(5500);
             transDec.guiFolder.add(transientSettings, 'areaEndHz').min(50).max(5500);
             transDec.guiFolder.add(transientSettings, 'areaQ').min(0).max(20);
             transDec.guiFolder.add(transientSettings, 'transientLength').min(0.001).max(1.5);
@@ -106,10 +106,10 @@ function Start(){
            // gui.remember(transientSettings);
             return transDec;
         }
-        transDectBands[0] = createTransientDetector("band0", 0.055, 50, 134, 3.3);
-        transDectBands[1] = createTransientDetector("band1", 0.072, 250, 375, 7.4);
-        transDectBands[2] = createTransientDetector("band2", 0.037, 1200, 1757, 7);
-        transDectBands[3] = createTransientDetector("band3", 0.037, 2000, 3199, 7);
+        transDectBands[0] = createTransientDetector("band0", 0.08, 20, 50, 15.3);
+        transDectBands[1] = createTransientDetector("band1", 0.098, 140, 250, 7.4);
+        transDectBands[2] = createTransientDetector("band2", 0.098, 1000, 1400, 1.9);
+        transDectBands[3] = createTransientDetector("band3", 0.136, 3600, 4100, 7);
 
         testAudio.connect(delay);    
         delay.connect(songGain);
