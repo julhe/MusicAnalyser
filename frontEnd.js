@@ -6,7 +6,7 @@ var topNoteBlocks = new Array(numberOfDifferentNotes);
 var fallDownSpeed = 5;
 var blocks;
 var timeLastBlockAppeared = [0,0,0,0];
-var minTimeForNewBlock = 250;
+var minTimeForNewBlock = 400;
 var userInputs = new Uint16Array(numberOfDifferentNotes);
 var lastUserInputs = new Uint16Array(numberOfDifferentNotes);
 var keyColors = ["","","",""];
@@ -88,9 +88,11 @@ function createBlocksFromInput()
                     timeLastBlockAppeared[index] = d.getTime();
                     createNewBlock(index);
                 }
+                /*
                 else if (value != 0){
                     elongateTopNote(index);
                 }
+                */
             }         
         }
         if(d.getTime() - timeLastBlockAppeared[index] < minTimeForNewBlock){
