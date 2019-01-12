@@ -42,13 +42,15 @@ function Start(){
 
     // gain controller for song, only used for debugging purpose
     var songGain = context.createGain();
-    gui.add(globalSettings, "songGain",0.0, 1.0);
-
+  
     var gain = context.createGain();
     gain.gain.value = 0;
     gain.connect(context.destination);
     request.send();
 
+    // wire gainnode to datGUI
+    gui.add(globalSettings, "songGain",0.0, 1.0);
+    
     // setup delay node. This is neccessary, so than the player has time to react to a falling note block.
     var delay = context.createDelay(timeToFall);
     delay.delayTime.value = timeToFall;
@@ -112,7 +114,6 @@ function Start(){
                 transDec.settings = transientSettings;
                 transDec.results = results;
             }
-
             return transDec;
         }
 
@@ -141,7 +142,8 @@ function Start(){
    }
 
     // applys the values manged by DatGUI to the webaudio nodes.
-    // normaly this would be done by DatGUI, but since the raw values (gain, freq,...) are wrapped inside some abstraction class, we need to manually apply them
+    // normaly this would be done by DatGUI, but since the raw values (gain, freq,...) 
+    // are wrapped inside some abstraction class, we need to manually apply them.
     function updateTransientDetectorSettings(transDec) {
     
         transDec.compMacro.attack.setValueAtTime(transDec.settings.attack, context.currentTime);
