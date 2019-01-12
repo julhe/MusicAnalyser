@@ -134,13 +134,24 @@ html, body {
 
 }
 .Menu{
-    margin-top: 12.5%;
     height: 100%;
     width: 100%;
     position: absolute;
     background-color: #f1f1f1;
 }
-  
+
+.header{
+    width: 100%;
+    height: 15%;
+    display: block;
+    color: #000;
+    font-family: "Impact", Charcoal, sans-serif;
+    font-size: 400%;
+    text-align: center;
+    padding: 8px 16px;
+    border: 0;
+}
+
 .MenuButton {
     width: 100%;
     height: 12.5%;
@@ -150,6 +161,7 @@ html, body {
     font-size: 300%;
     padding: 8px 16px;
     border: 0;
+    z-index: 999;
   }
 
 .MenuButton:hover {
@@ -157,7 +169,7 @@ html, body {
     color: white;
   }
 
-.ScoreEntry{
+.TextEntry{
     width: 100%;
     height: 2.5%;
     display: block;
@@ -165,6 +177,23 @@ html, body {
     font-family: "Impact", Charcoal, sans-serif;
     font-size: 150%;
     text-align: center;
-    padding: 8px 16px;
+    padding-top: 12px;
+    padding-bottom: 12px;
     border: 0;
+}
+
+#points{
+    width: 100%;
+    height: 15%;
+    top: 0;
+    display: block;
+    position: fixed;
+    color: #888888;
+    font-family: "Impact", Charcoal, sans-serif;
+    font-size: 250%;
+    text-align: center;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    border: 0;
+    z-index: 99999;
 }
