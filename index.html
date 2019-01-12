@@ -9,15 +9,27 @@
         <script type="text/javascript" src="dat.gui.min.js"></script>
         <script src="analyser.js"></script>
         <script src="frontEnd.js"></script>
-        <div class="hitBlock" id="hitBlock0"></div>
-        <div class="hitBlock" id="hitBlock1"></div>
-        <div class="hitBlock" id="hitBlock2"></div>
-        <div class="hitBlock" id="hitBlock3"></div>
-        <div id="noteArea" style="width:50%"></div>
-        <div id="debugVals"></div>
-        <div class="key" id="key0"></div>
-        <div class="key" id="key1"></div>
-        <div class="key" id="key2"></div>
-        <div class="key" id="key3"></div>
+        <div id="MainMenu">
+                <button class="MenuButton" onclick="Start();">PLAY</a></li>
+                <button class="MenuButton">SCORES</a></li>
+                <button class="MenuButton">CONTROLLS</a></li>
+                <button class="MenuButton">CREDITS</a></li> 
+        </div>
+        <div id="ScoreBoard" style="display: none;"></div>
+        <div id="Controlls" style="display: none;"></div>
+        <div id="Credits" style="display: none;"></div>
+
+        <div id="Game" style="display: none;">
+            <div class="hitBlock" id="hitBlock0"></div>
+            <div class="hitBlock" id="hitBlock1"></div>
+            <div class="hitBlock" id="hitBlock2"></div>
+            <div class="hitBlock" id="hitBlock3"></div>
+            <div id="noteArea" style="width:50%"></div>
+            <div id="debugVals"></div>
+            <div class="key" id="key0"></div>
+            <div class="key" id="key1"></div>
+            <div class="key" id="key2"></div>
+            <div class="key" id="key3"></div>
+        </div>
     </body>
 </html>

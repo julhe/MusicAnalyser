@@ -11,11 +11,13 @@ var userInputs = new Uint16Array(numberOfDifferentNotes);
 var lastUserInputs = new Uint16Array(numberOfDifferentNotes);
 var keyColors = ["","","",""];
 var points = 0;
+var noteArea;
 function start(numberOfNotes, targetFPS, timeToFall)
 {
+    noteArea = document.getElementById("noteArea");
     numberOfDifferentNotes = numberOfNotes;
     fps = targetFPS;
-    fallDownSpeed = (document.getElementById("noteArea").getBoundingClientRect().bottom + 50)/(timeToFall*fps);
+    fallDownSpeed = (noteArea.getBoundingClientRect().bottom + 50)/(timeToFall*fps);
     for(var i = 0; i < numberOfDifferentNotes; i++){
         var keyId = "key" + i;
         keyColors[i] = document.getElementById(keyId).style.backgroundImage;
@@ -30,12 +32,12 @@ function step(inputArray) {
     fadeHitBlocks();
 }
 function moveBlocks() {
-    blocks = document.getElementById("noteArea").childNodes;
+    blocks = noteArea.childNodes;
     blocks.forEach(function (child) {
         var rect = child.getBoundingClientRect();
         var newTop = rect.top + fallDownSpeed;
-        var newBottom = document.getElementById("noteArea").getBoundingClientRect().bottom - fallDownSpeed - rect.bottom;
-        if (newTop >= document.getElementById("noteArea").getBoundingClientRect().bottom + fallDownSpeed) {
+        var newBottom = noteArea.getBoundingClientRect().bottom - fallDownSpeed - rect.bottom;
+        if (newTop >= noteArea.getBoundingClientRect().bottom + fallDownSpeed) {
             child.remove;
             return;
         }
@@ -80,7 +82,7 @@ function elongateTopNote(noteIndex)
     if(topNoteBlocks[noteIndex]){
         var rect = topNoteBlocks[noteIndex].getBoundingClientRect();
         var newTop = - fallDownSpeed;
-        //var newBottom = document.getElementById("noteArea").getBoundingClientRect().bottom - fallDownSpeed - rect.bottom;
+        //var newBottom = noteArea.getBoundingClientRect().bottom - fallDownSpeed - rect.bottom;
         //console.log(rect.top + " , " + newBottom);
         topNoteBlocks[noteIndex].style.top = newTop;
         //topNoteBlocks[noteIndex].style.bottom = newBottom;
@@ -93,19 +95,19 @@ function createNewBlock(noteIndex)
     topNoteBlocks[noteIndex] = document.createElement("div");
     topNoteBlocks[noteIndex].id = "block" + noteIndex;
     topNoteBlocks[noteIndex].className = "block";
-    document.getElementById("noteArea").appendChild(topNoteBlocks[noteIndex]);
+    noteArea.appendChild(topNoteBlocks[noteIndex]);
     topNoteBlocks[noteIndex].style.width = 100 / numberOfDifferentNotes + "%";
     var rect = topNoteBlocks[noteIndex].getBoundingClientRect();
-    var newLeft = rect.left + document.getElementById("noteArea").offsetWidth * noteIndex / numberOfDifferentNotes;
-    var newRight = rect.right + (1 + document.getElementById("noteArea").offsetWidth * noteIndex) / numberOfDifferentNotes;
+    var newLeft = rect.left + noteArea.offsetWidth * noteIndex / numberOfDifferentNotes;
+    var newRight = rect.right + (1 + noteArea.offsetWidth * noteIndex) / numberOfDifferentNotes;
     topNoteBlocks[noteIndex].style.left = newLeft;
     topNoteBlocks[noteIndex].style.rigth = newRight;
-    var newBottom = document.getElementById("noteArea").getBoundingClientRect().bottom - fallDownSpeed;
+    var newBottom = noteArea.getBoundingClientRect().bottom - fallDownSpeed;
     topNoteBlocks[noteIndex].style.bottom = newBottom;
 }
 
 function backGroundBeat() {
-    //document.getElementById("noteArea").style.backgroundImage = "linear-gradient(#386,#321 75%)"
+    //noteArea.style.backgroundImage = "linear-gradient(#386,#321 75%)"
 }
 
 function pressButtonsFromUserInput(){
