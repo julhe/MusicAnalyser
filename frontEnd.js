@@ -26,6 +26,30 @@ function start(numberOfNotes, targetFPS, timeToFall)
     }
 }
 
+function showHighscores(points){
+    document.getElementById("MainMenu").style.display = "none";
+    document.getElementById("Game").style.display = "none";
+    document.getElementById("Scoreboard").style.display = "initial";
+}
+
+function showControlls(points){
+    document.getElementById("MainMenu").style.display = "none";
+    document.getElementById("Controlls").style.display = "initial";
+}
+
+function showCredits(points){
+    document.getElementById("MainMenu").style.display = "none";
+    document.getElementById("Credits").style.display = "initial";
+}
+
+function showMainMenu(){
+    document.getElementById("MainMenu").style.display = "initial";
+    document.getElementById("Game").style.display = "none";
+    document.getElementById("Scoreboard").style.display = "none";
+    document.getElementById("Controlls").style.display = "none";
+    document.getElementById("Credits").style.display = "none";
+}
+
 function step(inputArray) {
     input = inputArray;
     createBlocksFromInput();
@@ -98,7 +122,7 @@ function createNewBlock(noteIndex)
     topNoteBlocks[noteIndex].id = "block" + noteIndex;
     topNoteBlocks[noteIndex].className = "block";
     noteArea.appendChild(topNoteBlocks[noteIndex]);
-    topNoteBlocks[noteIndex].style.width = 100 / numberOfDifferentNotes + "%";
+    //topNoteBlocks[noteIndex].style.width = 100 / numberOfDifferentNotes + "%";
     var rect = topNoteBlocks[noteIndex].getBoundingClientRect();
     var newLeft = rect.left + noteArea.offsetWidth * noteIndex / numberOfDifferentNotes;
     var newRight = rect.right + (1 + noteArea.offsetWidth * noteIndex) / numberOfDifferentNotes;
@@ -121,14 +145,25 @@ function pressButtonsFromUserInput(){
             noteKey.style.backgroundImage = keyColors[index];
         }
         else{
-            noteKey.style.backgroundImage = "linear-gradient(#FF1800 80%, #FF7C00 95%)";
+            noteKey.style.backgroundImage = "url('images/CircleDown.png')";
             if(userInputs[index] != lastUserInputs[index]){
-                var hitDiv = document.elementFromPoint(noteKey.getBoundingClientRect().x + noteKey.getBoundingClientRect().width/2,noteKey.getBoundingClientRect().top - 5);
-                if(hitDiv.className == "block"){
-                    hitDiv.id = "destroyed";
-                    hitDiv.className = "destroyed";
-                    var hitBlock = "hitBlock" + index;
-                    document.getElementById(hitBlock).style.opacity = ".75";
+                var hitDivsTop = document.elementsFromPoint(noteKey.getBoundingClientRect().x + noteKey.getBoundingClientRect().width/2,noteKey.getBoundingClientRect().top);
+                var hitDivsMiddle = document.elementsFromPoint(noteKey.getBoundingClientRect().x + noteKey.getBoundingClientRect().width/2,noteKey.getBoundingClientRect().top + noteKey.getBoundingClientRect().height/2);
+                var hitDivsBottom = document.elementsFromPoint(noteKey.getBoundingClientRect().x + noteKey.getBoundingClientRect().width/2, noteKey.getBoundingClientRect().top - 5 + noteKey.getBoundingClientRect().height);
+                var hitDivs = hitDivsTop.concat(hitDivsMiddle, hitDivsBottom);
+                var hitSomething = false;
+                hitDivs.forEach(hitDiv => {
+                    if(hitDiv.className == "block"){
+                        //hitDiv.id = "destroyed";
+                        hitDiv.className = "destroyed block";
+                        hitDiv.style.backgroundImage = "url('images/NoteDead.png')";
+                        var hitBlock = "hitBlock" + index;
+                        document.getElementById(hitBlock).style.opacity = ".75";
+                        hitSomething = true;
+                    }
+                });
+                
+                if(hitSomething){
                     points += 100;
                 }
                 else{

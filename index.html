@@ -9,22 +9,40 @@
         <script type="text/javascript" src="dat.gui.min.js"></script>
         <script src="analyser.js"></script>
         <script src="frontEnd.js"></script>
-        <div id="MainMenu">
+        <div id="MainMenu" class="Menu">
                 <button class="MenuButton" onclick="Start();">PLAY</a></li>
-                <button class="MenuButton">SCORES</a></li>
-                <button class="MenuButton">CONTROLLS</a></li>
-                <button class="MenuButton">CREDITS</a></li> 
+                <button class="MenuButton" onclick="showHighscores();">SCORES</a></li>
+                <button class="MenuButton" onclick="showControlls();">CONTROLLS</a></li>
+                <button class="MenuButton" onclick="showCredits();">CREDITS</a></li> 
         </div>
-        <div id="ScoreBoard" style="display: none;"></div>
-        <div id="Controlls" style="display: none;"></div>
-        <div id="Credits" style="display: none;"></div>
+        <div id="Scoreboard" class="Menu" style="display: none;">
+            <div class="ScoreEntry">1. Best Boy Jonny</div>  
+            <div class="ScoreEntry">2. The Heineken Bottle</div>  
+            <div class="ScoreEntry">3. IntelligentRoomba</div>  
+            <div class="ScoreEntry">4. xXxXTokioHotelLoverXxXx</div> 
+            <div class="ScoreEntry">5. 420Blazer69</div> 
+            <div class="ScoreEntry">6. QAnnon</div> 
+            <div class="ScoreEntry">7. ANNONYMUS</div> 
+            <div class="ScoreEntry">8. NiceGuyBrony</div> 
+            <div class="ScoreEntry">9. Skynet</div> 
+            <div class="ScoreEntry">10. MachMalPlaaßDa!</div>
+            <button class="MenuButton" onclick="showMainMenu();">BACK</a></li> 
+        </div>
+        <div id="Controlls" class="Menu" style="display: none;">
+            <button class="MenuButton" onclick="showMainMenu();">BACK</a></li></div> 
+        <div id="Credits" class="Menu" style="display: none;">
+            <div class="ScoreEntry">A CONCIOUS BOTTLE OF HEINEKEN</div>
+            <div class="ScoreEntry">&</div>
+            <div class="ScoreEntry">A TRUE HERO</div>
+            <button class="MenuButton" onclick="showMainMenu();">BACK</a></li> 
+        </div>
 
         <div id="Game" style="display: none;">
             <div class="hitBlock" id="hitBlock0"></div>
             <div class="hitBlock" id="hitBlock1"></div>
             <div class="hitBlock" id="hitBlock2"></div>
             <div class="hitBlock" id="hitBlock3"></div>
-            <div id="noteArea" style="width:50%"></div>
+            <div id="noteArea"></div>
             <div id="debugVals"></div>
             <div class="key" id="key0"></div>
             <div class="key" id="key1"></div>
