@@ -1,18 +1,15 @@
-
 const bandsCount = 4;
 var fps = 60;
 var timeToFall = 3;
 var bands = [bandsCount];
 
-var compGlobal, compLocal;
-var transientSettings = { attack: 0.083, transientLength: 0.7, threshold: 4, localRelease: 0.0006, bandF: 500, bandQ: 0}
 var comp_global_attack = 0.01, 
     comp_global_release = 0.01; 
-    comp_global_thresshold = -100, 
+    comp_global_thresshold = -42, 
     comp_global_ratio = 12;
 var comp_local_attack = 0.00,
     comp_local_release = 0.0, 
-    comp_local_thresshold = -100, 
+    comp_local_thresshold = -42, 
     comp_local_ratio = 12;
 var gui = new dat.GUI();
 
@@ -26,8 +23,6 @@ var globalSettings = {
 function Start(){
 
     //initalization
-   
-
     var request = new XMLHttpRequest();
     request.open('GET', "sounds/Daft Punk - HarderBetter Faster Stronger Remix.mp3", true);
     request.responseType = 'arraybuffer';
@@ -43,25 +38,13 @@ function Start(){
 
     var songGain = context.createGain();
     gui.add(globalSettings, "songGain",0.0, 1.0);
-    gui.remember(globalSettings);
+  //  gui.remember(globalSettings);
     // create debug OSC
   
-    var osc0 = context.createOscillator();
     var gain = context.createGain();
-    osc0.connect(gain);
     gain.gain.value = 0;
-    osc0.frequency = 440;
     gain.connect(context.destination);
-    osc0.start(context.currentTime);
     request.send();
-
-    var analyser = context.createAnalyser();
-    analyser.fftSize = 8192;
-    analyser.maxDecibels = 90;
-    analyser.minDecibels = -200;
-    var bufferLength = analyser.frequencyBinCount;
-    var dataArray = new Uint8Array(bufferLength);
-    analyser.getByteTimeDomainData(dataArray);
 
     var delay = context.createDelay(timeToFall);
     delay.delayTime.value = timeToFall;
@@ -76,7 +59,6 @@ function Start(){
             transDec.bandpassFilter = context.createBiquadFilter();
             transDec.bandpassFilter.type = "bandpass";
             transDec.debugGain = context.createGain();
-
 
             testAudio.connect(transDec.bandpassFilter);
             transDec.bandpassFilter.connect(transDec.compGlobal);
@@ -118,7 +100,6 @@ function Start(){
             transDec.settings = transientSettings;
             transDec.results = results;
 
-
             gui.remember(transientSettings);
             return transDec;
         }
@@ -131,8 +112,6 @@ function Start(){
         delay.connect(songGain);
         songGain.connect(context.destination);
         testAudio.start(0,0);   
-        //testAudio.connect(analyser);
-      //  analyser.connect(delay);
        // compGlobal.connect(context.destination);
        // gainByTransient.connect(context.destination);
 
@@ -149,7 +128,6 @@ function Start(){
    function isNumberEqual(num1, num2) {
        return Math.abs(num1 - num2) <= 1.0;
    }
-
 
     function updateCompressorValues(transDec) {
     
@@ -204,10 +182,8 @@ function Start(){
         ]
     });
 
-
     function UpdateTransientDetectors() {
         return;
-
 
         transientLevel = ( compLocal.reduction - compGlobal.reduction);
         if(transientLevel > 13.0) {
@@ -232,7 +208,6 @@ function Start(){
         
     }
 
-
     function draw() {
 
         requestAnimationFrame(draw);
@@ -243,65 +218,13 @@ function Start(){
         updateCompressorValues(transDectBands[3]);
 
         UpdateTransientDetectors();
-        analyser.getByteFrequencyData(dataArray);
-      
-        // canvasCtx.fillStyle = "rgb(200, 200, 200)";
-        // canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
-      
-        // canvasCtx.lineWidth = 2;
-        // canvasCtx.strokeStyle = "rgb(0, 0, 0)";
-      
-        // canvasCtx.beginPath();
-          
-        //split into 4 bands
 
-        const maxFFTFreq = 44100 / 2.0;
-        
-        for (let i = 0; i < bandsCount; i++) {
-            
-            const i01 = i / bandsCount;
-            const i01Plus1 = (i + 1) / bandsCount;
-            //const varsPerBands = Math.floor(bufferLength * ((Math.log2(i + 3) / 8.499)));
-            const varsPerBands = Math.round(bufferLength / (2*bandsCount));
-            // console.log(varsPerBands);
-            const start = i * varsPerBands;
-            const end = (i + 1) * varsPerBands;
-
-            var average = dataArray[start];
-            for (let j = start + 1; j < end; j++) {
-                const element = dataArray[j];
-                average += element;
-            }
-
-            average /= (end - start);
-            bands[i] = average;
-        }
-
-        // bands[0] = bands[1] = bands[2] = bands[3] = transientLevel > 0 ? 1 : 0;
-        // bands[0] = transientLevel > 0;
         bands[0] = Number(transDectBands[0].results.transientLevel > 0.0);
         bands[1] = Number(transDectBands[1].results.transientLevel > 0.0);
         bands[2] = Number(transDectBands[2].results.transientLevel > 0.0);
         bands[3] = Number(transDectBands[3].results.transientLevel > 0.0);
 
-        // console.log(parseFloat(Math.round(band0 * 100) / 100).toFixed(2) + "," + parseFloat(Math.round(band1 * 100) / 100).toFixed(2) + "," + parseFloat(Math.round(band2 * 100) / 100).toFixed(2) + "," + parseFloat(Math.round(band3 * 100) / 100).toFixed(2) + "," + parseFloat(Math.round(av * 100) / 100).toFixed(2));
-        // bands[0] = band0 > av * document.getElementById("myRange0").value;
-        // bands[1] = band1 > av * document.getElementById("myRange1").value;
-        // bands[2] = band2 > av * document.getElementById("myRange2").value;
-        // bands[3] = band3 > av * document.getElementById("myRange3").value;
-        // console.log(document.getElementById("myRange0").value + "," + document.getElementById("myRange1").value + "," + document.getElementById("myRange2").value + "," + document.getElementById("myRange3").value)
-
-        //console.log(bands[3]);
-        //TODO: schwellwert adaptive machen
-        /*
-        bands[0] = bands[0] > 125;
-        bands[1] = bands[1] > 110;
-        bands[2] = bands[2] > 80;
-        bands[3] = bands[3] > 50;
-        */
-        
         step(bands);
-
         // var sliceWidth = canvas.width * 1.0 / bandsCount;
         // var x = 0;
         // for (var i = 0; i < bands.length; i++) {
@@ -317,8 +240,7 @@ function Start(){
 
         //     x += sliceWidth;
         // }
-      
-        
+         
         // canvasCtx.lineTo(canvas.width, canvas.height / 2);
         // canvasCtx.stroke();
     
@@ -330,65 +252,4 @@ function Start(){
         // bufferWithIndex.sort(function(a, b) {return b.value - a.value});
         // outText.innerHTML = bufferWithIndex[0].value + " " + bufferWithIndex[0].x;
       }      
-}
-
-// src: https://stackoverflow.com/questions/31644060/how-can-i-get-an-audiobuffersourcenodes-current-time
-function createSound(buffer, context) {
-    var sourceNode = null,
-        startedAt = 0,
-        pausedAt = 0,
-        playing = false;
-
-    sourceNode = context.createBufferSource();
-    sourceNode.buffer = buffer;
-    var play = function(sound) {
-        var offset = pausedAt;
-        sourceNode.start(0, offset);
-        startedAt = context.currentTime - offset;
-        pausedAt = 0;
-        playing = true;
-    };
-
-    var pause = function() {
-        var elapsed = context.currentTime - startedAt;
-        stop();
-        pausedAt = elapsed;
-    };
-
-    var stop = function() {
-        if (sourceNode) {          
-            sourceNode.stop(0);
-        }
-        pausedAt = 0;
-        startedAt = 0;
-        playing = false;
-    };
-
-    var getPlaying = function() {
-        return playing;
-    };
-
-    var getCurrentTime = function() {
-        if(pausedAt) {
-            return pausedAt;
-        }
-        if(startedAt) {
-            return context.currentTime - startedAt;
-        }
-        return 0;
-    };
-
-    var getDuration = function() {
-      return buffer.duration;
-    };
-
-    return {
-        getCurrentTime: getCurrentTime,
-        getDuration: getDuration,
-        getPlaying: getPlaying,
-        play: play,
-        pause: pause,
-        stop: stop,
-        sourceNode: sourceNode
-    };
 }
