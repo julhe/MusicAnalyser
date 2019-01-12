@@ -10,34 +10,41 @@
         <script src="analyser.js"></script>
         <script src="frontEnd.js"></script>
         <div id="MainMenu" class="Menu">
+            <div class="header">MUSIC ANALYSER</div>
                 <button class="MenuButton" onclick="Start();">PLAY</a></li>
                 <button class="MenuButton" onclick="showHighscores();">SCORES</a></li>
                 <button class="MenuButton" onclick="showControlls();">CONTROLLS</a></li>
                 <button class="MenuButton" onclick="showCredits();">CREDITS</a></li> 
         </div>
         <div id="Scoreboard" class="Menu" style="display: none;">
-            <div class="ScoreEntry">1. Best Boy Jonny</div>  
-            <div class="ScoreEntry">2. The Heineken Bottle</div>  
-            <div class="ScoreEntry">3. IntelligentRoomba</div>  
-            <div class="ScoreEntry">4. xXxXTokioHotelLoverXxXx</div> 
-            <div class="ScoreEntry">5. 420Blazer69</div> 
-            <div class="ScoreEntry">6. QAnnon</div> 
-            <div class="ScoreEntry">7. ANNONYMUS</div> 
-            <div class="ScoreEntry">8. NiceGuyBrony</div> 
-            <div class="ScoreEntry">9. Skynet</div> 
-            <div class="ScoreEntry">10. MachMalPlaaßDa!</div>
+            <div class="header">HIGHSCROES</div>
+
+            <div class="TextEntry">1. Best Boy Jonny</div>  
+            <div class="TextEntry">2. The Heineken Bottle</div>  
+            <div class="TextEntry">3. IntelligentRoomba</div>  
+            <div class="TextEntry">4. xXxXTokioHotelLoverXxXx</div> 
+            <div class="TextEntry">5. 420Blazer69</div> 
+            <div class="TextEntry">6. QAnnon</div> 
+            <div class="TextEntry">7. ANNONYMUS</div> 
+            <div class="TextEntry">8. NiceGuyBrony</div> 
+            <div class="TextEntry">9. Skynet</div> 
+            <div class="TextEntry">10. MachMalPlaaßDa!</div>
             <button class="MenuButton" onclick="showMainMenu();">BACK</a></li> 
         </div>
         <div id="Controlls" class="Menu" style="display: none;">
+                <div class="header">CONTROLLS</div>
+                <div class="TextEntry">USE "Q, W, E, R" TO HIT THE NOTES, WHEN THEY ARRIVE AT THE BOTTOM</div>
             <button class="MenuButton" onclick="showMainMenu();">BACK</a></li></div> 
         <div id="Credits" class="Menu" style="display: none;">
-            <div class="ScoreEntry">A CONCIOUS BOTTLE OF HEINEKEN</div>
-            <div class="ScoreEntry">&</div>
-            <div class="ScoreEntry">A TRUE HERO</div>
+                <div class="header">CREDITS</div>
+            <div class="TextEntry">JULIAN HEINKEN</div>
+            <div class="TextEntry">&</div>
+            <div class="TextEntry">JONATHAN HELD</div>
             <button class="MenuButton" onclick="showMainMenu();">BACK</a></li> 
         </div>
 
         <div id="Game" style="display: none;">
+            <div id="points">0</div>
             <div class="hitBlock" id="hitBlock0"></div>
             <div class="hitBlock" id="hitBlock1"></div>
             <div class="hitBlock" id="hitBlock2"></div>

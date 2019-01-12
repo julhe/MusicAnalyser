@@ -174,7 +174,7 @@ function pressButtonsFromUserInput(){
             }
             
         }
-        console.log("Points: " + points);
+        document.getElementById("points").innerHTML = "" + points;
         lastUserInputs[index] = userInputs[index];
     });
 
