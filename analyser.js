@@ -22,8 +22,9 @@ var globalSettings = {
     songGain: 1.0,
 };
 
-window.onload = function () {
-     
+//window.onload = function () {
+function Start(){
+
     //initalization
    
 

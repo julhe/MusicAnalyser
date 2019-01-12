@@ -14,6 +14,8 @@ var points = 0;
 var noteArea;
 function start(numberOfNotes, targetFPS, timeToFall)
 {
+    document.getElementById("MainMenu").style.display = "none";
+    document.getElementById("Game").style.display = "initial";
     noteArea = document.getElementById("noteArea");
     numberOfDifferentNotes = numberOfNotes;
     fps = targetFPS;
