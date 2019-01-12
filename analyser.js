@@ -5,18 +5,17 @@ const bandsCount = 4; //TODO: remove, as its hardwired anyway
 var fps = 60;
 const timeToFall = 3;
 var bands = [4];
-
+const transientGlobalThresshold = -40
 const 
     comp_global_release = 0.01; 
-    comp_global_thresshold = -40, 
     comp_global_ratio = 12;
 const comp_local_attack = 0.00,
     comp_local_release = 0.0, 
-    comp_local_thresshold = -40, 
     comp_local_ratio = 12;
-var gui = new dat.GUI();
+
 
 // global variables
+var gui = new dat.GUI();
 var context = new AudioContext();
 var songAudioSource;
 var globalSettings = {
@@ -50,7 +49,7 @@ function Start(){
 
     // wire gainnode to datGUI
     gui.add(globalSettings, "songGain",0.0, 1.0);
-    
+
     // setup delay node. This is neccessary, so than the player has time to react to a falling note block.
     var delay = context.createDelay(timeToFall);
     delay.delayTime.value = timeToFall;
@@ -86,14 +85,14 @@ function Start(){
                 // settings dictonary for DatGUI
                 var transientSettings = { 
                 
-                    attack: attack, // the attack of the local/fast compressor
-                    transientLength: 0.7, 
-                    threshold: 4, 
-                    localRelease: 0.0006, 
-                    areaStartHz: areaStartHz, 
-                    areaEndHz: areaEndHz, 
-                    areaQ: areaQ,
-                    bandToMaster: 0.0
+                    attack: attack, // the attack of the local/fast compressor. higher values usually lead to less positives
+                    transientLength: 0.7, // release time. longer values usallay lead to longer positives
+                    threshold: 4, //unused
+                    localRelease: 0.0006, //can prevent "bursting" transients, but is in a rightplace right now
+                    areaStartHz: areaStartHz, // highpass cutoff freq
+                    areaEndHz: areaEndHz,  // lowpass cutoff freq
+                    areaQ: areaQ, // Q of low- and highpass filter
+                    bandToMaster: 0.0 //(debug) wires the output of the low- and high pass filter to the master
                 };
     
                 // output dictionary for DatGUI
@@ -148,12 +147,12 @@ function Start(){
     
         transDec.compMacro.attack.setValueAtTime(transDec.settings.attack, context.currentTime);
         transDec.compMacro.release.setValueAtTime(transDec.settings.transientLength, context.currentTime);
-        transDec.compMacro.threshold.setValueAtTime(comp_global_thresshold, context.currentTime);
+        transDec.compMacro.threshold.setValueAtTime(transientGlobalThresshold, context.currentTime);
         transDec.compMacro.ratio.setValueAtTime(comp_global_ratio, context.currentTime);
 
         transDec.compMicro.attack.setValueAtTime(comp_local_attack, context.currentTime);
         transDec.compMicro.release.setValueAtTime(transDec.settings.localRelease, context.currentTime);
-        transDec.compMicro.threshold.setValueAtTime(comp_local_thresshold, context.currentTime);
+        transDec.compMicro.threshold.setValueAtTime(transientGlobalThresshold, context.currentTime);
         transDec.compMicro.ratio.setValueAtTime(comp_local_ratio, context.currentTime);
 
         transDec.filterLowPass.frequency.setValueAtTime(transDec.settings.areaEndHz, context.currentTime);
