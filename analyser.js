@@ -1,15 +1,18 @@
+const songPath = "sounds/MGMT - Little Dark Age (Official Video).mp3"
+
 const bandsCount = 4;
+
 var fps = 60;
 var timeToFall = 3;
 var bands = [bandsCount];
 
 var comp_global_attack = 0.01, 
     comp_global_release = 0.01; 
-    comp_global_thresshold = -42, 
+    comp_global_thresshold = -60, 
     comp_global_ratio = 12;
 var comp_local_attack = 0.00,
     comp_local_release = 0.0, 
-    comp_local_thresshold = -42, 
+    comp_local_thresshold = -60, 
     comp_local_ratio = 12;
 var gui = new dat.GUI();
 
@@ -24,7 +27,7 @@ function Start(){
 
     //initalization
     var request = new XMLHttpRequest();
-    request.open('GET', "sounds/Daft Punk - HarderBetter Faster Stronger Remix.mp3", true);
+    request.open('GET', songPath, true);
     request.responseType = 'arraybuffer';
 
     request.onload = function () {
@@ -52,35 +55,35 @@ function Start(){
     var canvasCtx, canvas, outText;
     var transDectBands = [];
     function OnLoadFinished(){
-        function createTransientDetector(name, bandFreq, bandQ){
+        function createTransientDetector(name, attack, areaStartHz, areaEndHz, areaQ){
             var transDec = [];
             transDec.compLocal = context.createDynamicsCompressor();
             transDec.compGlobal = context.createDynamicsCompressor();
-            transDec.bandpassFilter = context.createBiquadFilter();
-            transDec.bandpassFilter.type = "bandpass";
+            transDec.filterLowPass = context.createBiquadFilter();
+            transDec.filterLowPass.type = "lowpass";
+            transDec.filterHighPass = context.createBiquadFilter();
+            transDec.filterHighPass.type = "highpass";
             transDec.debugGain = context.createGain();
 
-            testAudio.connect(transDec.bandpassFilter);
-            transDec.bandpassFilter.connect(transDec.compGlobal);
-            transDec.bandpassFilter.connect(transDec.compLocal);
-            transDec.bandpassFilter.connect(transDec.debugGain);
+            testAudio.connect(transDec.filterHighPass);
+            transDec.filterHighPass.connect(transDec.filterLowPass);
+            transDec.filterLowPass.connect(transDec.compGlobal);
+            transDec.filterLowPass.connect(transDec.compLocal);
+            transDec.filterLowPass.connect(transDec.debugGain);
             transDec.debugGain.connect(context.destination);
 
             transDec.guiFolder = gui.addFolder(name);
 
-            function setActive() {
-                testAudio.sourceNode.disconnect(context.destination);
-                transDec.bandpassFilter.connect(context.destination);
-            }
             // default settings
             var transientSettings = { 
                 
-                attack: 0.083, 
+                attack: attack, 
                 transientLength: 0.7, 
                 threshold: 4, 
                 localRelease: 0.0006, 
-                bandF: bandFreq, 
-                bandQ: bandQ,
+                areaStartHz: areaStartHz, 
+                areaEndHz: areaEndHz, 
+                areaQ: areaQ,
                 bandToMaster: 0.0
             };
 
@@ -89,24 +92,24 @@ function Start(){
             };
 
             transDec.guiFolder.add(results, 'transientLevel', -2, 2).listen();
+            transDec.guiFolder.add(transientSettings, 'bandToMaster', 0, 1);
             transDec.guiFolder.add(transientSettings, 'attack').min(0.001).max(0.2);
+            transDec.guiFolder.add(transientSettings, 'areaStartHz').min(50).max(5500);
+            transDec.guiFolder.add(transientSettings, 'areaEndHz').min(50).max(5500);
+            transDec.guiFolder.add(transientSettings, 'areaQ').min(0).max(20);
             transDec.guiFolder.add(transientSettings, 'transientLength').min(0.001).max(1.5);
             transDec.guiFolder.add(transientSettings, 'localRelease').min(0.000).max(0.001);
-            // gui.add(transientSettings, 'threshold').min(0.2).max(6);
-            transDec.guiFolder.add(transientSettings, 'bandF').min(20).max(10000);
-            transDec.guiFolder.add(transientSettings, 'bandQ').min(0,).max(25);
-            transDec.guiFolder.add(transientSettings, 'bandToMaster', 0, 1);
             // transDec.guiFolder.add()
             transDec.settings = transientSettings;
             transDec.results = results;
 
-            gui.remember(transientSettings);
+           // gui.remember(transientSettings);
             return transDec;
         }
-        transDectBands[0] = createTransientDetector("band0", 80, 8);
-        transDectBands[1] = createTransientDetector("band1", 350, 4);
-        transDectBands[2] = createTransientDetector("band2", 3000, 2.5);
-        transDectBands[3] = createTransientDetector("band3", 7000, 2);
+        transDectBands[0] = createTransientDetector("band0", 0.055, 50, 134, 3.3);
+        transDectBands[1] = createTransientDetector("band1", 0.072, 250, 375, 7.4);
+        transDectBands[2] = createTransientDetector("band2", 0.037, 1200, 1757, 7);
+        transDectBands[3] = createTransientDetector("band3", 0.037, 2000, 3199, 7);
 
         testAudio.connect(delay);    
         delay.connect(songGain);
@@ -141,8 +144,10 @@ function Start(){
         transDec.compLocal.threshold.setValueAtTime(comp_local_thresshold, context.currentTime);
         transDec.compLocal.ratio.setValueAtTime(comp_local_ratio, context.currentTime);
 
-        transDec.bandpassFilter.frequency.value = transDec.settings.bandF;
-        transDec.bandpassFilter.Q.value = transDec.settings.bandQ;
+        transDec.filterLowPass.frequency.setValueAtTime(transDec.settings.areaEndHz, context.currentTime);
+        transDec.filterHighPass.frequency.setValueAtTime(transDec.settings.areaStartHz, context.currentTime);
+        transDec.filterLowPass.Q.setValueAtTime(transDec.settings.areaQ, context.currentTime);
+        transDec.filterHighPass.Q.setValueAtTime(transDec.settings.areaQ, context.currentTime);
 
         transDec.results.transientLevel = (transDec.compLocal.reduction - transDec.compGlobal.reduction);
         if(isNumberEqual(transDec.compGlobal.reduction, 0)) {
