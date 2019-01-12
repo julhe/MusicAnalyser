@@ -12,6 +12,8 @@ var lastUserInputs = new Uint16Array(numberOfDifferentNotes);
 var keyColors = ["","","",""];
 var points = 0;
 var noteArea;
+var playerNames = ["NoNameNelson","NoNameNelson","NoNameNelson","NoNameNelson","NoNameNelson","NoNameNelson","NoNameNelson","NoNameNelson","NoNameNelson","NoNameNelson","NoNameNelson","NoNameNelson"];
+var playerPoints = [20,18,16,14,12,10,8,6,4,2];
 function start(numberOfNotes, targetFPS, timeToFall)
 {
     document.getElementById("MainMenu").style.display = "none";
@@ -27,6 +29,53 @@ function start(numberOfNotes, targetFPS, timeToFall)
 }
 
 function showHighscores(points){
+    points = 11;
+    var playerPosition = -1;
+    if(points > 0){
+        for(var i = 0; i < playerPoints.length; i++){
+            if(points > playerPoints[i]){
+                playerPoints.splice(i, 0, points);
+                playerPoints.pop();
+                playerNames.splice(i, 0, "Enter your name!");
+                playerNames.pop();
+                playerPosition = i;
+                break;
+            }
+        }
+        var scoresElement = document.getElementById("scores");
+        while (scoresElement.firstChild) {
+            scoresElement.removeChild(scoresElement.firstChild);
+        }
+        for(var i = 0; i < playerPoints.length; i++){
+            var playerNameElement;
+            var pointElement;
+            var scoreElement;
+            if(playerPosition == i){
+                playerNameElement = document.createElement("input");
+                playerNameElement.placeholder = playerNames[i]; 
+                playerNameElement.onchange = function submitName(){
+                    playerNames[playerPosition] = this.value;
+                };       
+            }
+            else{
+                playerNameElement = document.createElement("div");
+                playerNameElement.innerHTML = playerNames[i];
+            }
+            playerNameElement.className = "PointEntry";
+            pointElement = document.createElement("div");
+            pointElement.innerHTML = playerPoints[i];
+            pointElement.className = "PointEntry";
+            scoreElement = document.createElement("div");
+            scoreElement.className = "ScoreContainer";
+            scoreElement.appendChild(playerNameElement);
+            scoreElement.appendChild(pointElement);
+            scoresElement.appendChild(scoreElement);
+        }
+
+        function submitName(name, position){
+            playerNames[position] = name;
+        }
+    }
     document.getElementById("MainMenu").style.display = "none";
     document.getElementById("Game").style.display = "none";
     document.getElementById("Scoreboard").style.display = "initial";
