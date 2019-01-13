@@ -134,6 +134,7 @@ function Start(){
 
         // start playing song
         songAudioSource.start(0,0);   
+        setTimeout(showHighscores(points), songAudioSource.duration);
 
         // notify front-end over finished initalization
         start(bandsCount, fps, timeToFall);
