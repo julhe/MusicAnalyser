@@ -1,6 +1,6 @@
 // global settings
-const songName = "MGMT - Little Dark Age (Official Video).mp3"
-
+//const songName = "MGMT - Little Dark Age (Official Video).mp3"
+var songName;
 const bandsCount = 4; //TODO: remove, as its hardwired anyway
 var fps = 60;
 const timeToFall = 3;
@@ -24,7 +24,12 @@ var globalSettings = {
 
 // entry point for front-end
 function Start(){
-
+    //Switch to gameview
+    document.getElementById("MainMenu").style.display = "none";
+    document.getElementById("Game").style.display = "initial";
+    document.getElementById("points").innerHTML = "LOADING...";
+    var songSelect = document.getElementById("songSelect");
+    songName = songSelect[songSelect.selectedIndex].value;
     //initalization of the song
     let request = new XMLHttpRequest();
     request.open('GET', "sounds/" + songName, true);

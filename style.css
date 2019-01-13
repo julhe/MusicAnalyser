@@ -162,6 +162,7 @@ html, body {
     padding: 8px 16px;
     border: 0;
     z-index: 999;
+    cursor: pointer;
   }
 
 .MenuButton:hover {
@@ -169,8 +170,8 @@ html, body {
     color: white;
 }
 
-#scores{
-
+#songSelect{
+    
 }
 .PointEntry{
     display: inline-block;

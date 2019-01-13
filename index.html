@@ -11,24 +11,21 @@
         <script src="frontEnd.js"></script>
         <div id="MainMenu" class="Menu">
             <div class="header">MUSIC ANALYSER</div>
-                <button class="MenuButton" onclick="Start();">PLAY</a></li>
-                <button class="MenuButton" onclick="showHighscores();">SCORES</a></li>
-                <button class="MenuButton" onclick="showControlls();">CONTROLLS</a></li>
-                <button class="MenuButton" onclick="showCredits();">CREDITS</a></li> 
+                <button class="MenuButton" onclick="Start();">PLAY</button>
+                <button class="MenuButton" onclick="showHighscores();">SCORES</button>
+                <button class="MenuButton" onclick="showControlls();">CONTROLLS</button>
+                <button class="MenuButton" onclick="showCredits();">CREDITS</button>
+                <select class="MenuButton" id="songSelect">
+                        <option value="MGMT - Little Dark Age (Official Video).mp3">MGMT - Little Dark Age</option>
+                        <option value="SDP - Hast du mal ein Problem.mpeg">SDP - Hast du mal ein Problem</option>
+                        <option value="Daft Punk - HarderBetter Faster Stronger Remix.mp3">Daft Punk - HarderBetter Faster Stronger Remix</option>
+                        <option value="Oasis - Wonderwall.mp3">Oasis - Wonderwall</option>
+                </select>
         </div>
+        
         <div id="Scoreboard" class="Menu" style="display: none;">
             <div class="header">HIGHSCROES</div>
             <li id="scores">
-                <div class="TextEntry">1. Best Boy Jonny</div>  
-                <div class="TextEntry">2. The Heineken Bottle</div>  
-                <div class="TextEntry">3. IntelligentRoomba</div>  
-                <div class="TextEntry">4. xXxXTokioHotelLoverXxXx</div> 
-                <div class="TextEntry">5. 420Blazer69</div> 
-                <div class="TextEntry">6. QAnnon</div> 
-                <div class="TextEntry">7. ANNONYMUS</div> 
-                <div class="TextEntry">8. NiceGuyBrony</div> 
-                <div class="TextEntry">9. Skynet</div> 
-                <div class="TextEntry">10. MachMalPlaaßDa!</div>
             </li>
             
             <button class="MenuButton" onclick="showMainMenu();">BACK</a></li> 
