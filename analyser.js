@@ -22,6 +22,7 @@ var globalSettings = {
     songGain: 1.0,
 };
 
+var transDectBands = [];
 function Init() {
     // creates a single TransientDetectorObject
     function createTransientDetector(name, attack, areaStartHz, areaEndHz, areaQ){
@@ -125,7 +126,7 @@ function Start(){
     var delay = context.createDelay(timeToFall);
     delay.delayTime.value = timeToFall;
 
-    var transDectBands = [];
+
     // create the transient detectors for all four bands, after the song was loaded
     function OnLoadFinished(){
 
@@ -140,14 +141,17 @@ function Start(){
         songGain.connect(context.destination);
 
         // start playing song
-        songAudioSource.start(0,0);   
+        songAudioSource.start(0,0);
+        var songDuration = songAudioSource.buffer.duration;
+        console.log(songDuration);
         setTimeout(function()
         { 
-            songAudioSource.disconect();
+            songAudioSource.disconnect();
             showHighscores(points); 
             console.log("timeout");
+            
         }
-         ,songAudioSource.duration);
+         ,(songDuration + delay.delayTime.value) * 1000);
 
         // notify front-end over finished initalization
         start(bandsCount, fps, timeToFall);
