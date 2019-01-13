@@ -13,7 +13,7 @@ var keyColors = ["","","",""];
 var points = 0;
 var noteArea;
 var playerNames = ["NoNameNelson","NoNameNelson","NoNameNelson","NoNameNelson","NoNameNelson","NoNameNelson","NoNameNelson","NoNameNelson","NoNameNelson","NoNameNelson","NoNameNelson","NoNameNelson"];
-var playerPoints = [20,18,16,14,12,10,8,6,4,2];
+var playerPoints = [0,0,0,0,0,0,0,0,0,0];
 
 document.onload = Init();
 function start(numberOfNotes, targetFPS, timeToFall)
