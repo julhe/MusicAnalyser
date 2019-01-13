@@ -1,8 +1,7 @@
 html, body {
     padding: 0;
     margin: 0;
-    background: #f1f1f1;
-    color: #e0d336;
+
 }
 
 #noteArea {
@@ -13,99 +12,52 @@ html, body {
 }
 
 .block {
-    border-radius: 5%;
-    margin-top: 0;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 100%;
     width: 25%;
     position: absolute;
-    z-index: 9999;
+    z-index: 100;
     background-image: url("images/NoteAlive.png");
-    background-position: center; /* Center the image */
-    background-repeat: no-repeat; /* Do not repeat the image */
+    background-position: center;
+    background-repeat: no-repeat;
     background-size: contain;
 }
-/*
-#block0 {
-    background-image: linear-gradient(#240DFF 50%, #200ce5 85%);
-}
-#block1 {
-    background-image: linear-gradient(#0ca0e8 50%, #53baec 85%);
-}
-#block2 {
-    background-image: linear-gradient(#5BE80C 50%, #8aec53 85%);
-}
-#block3 {
-    background-image: linear-gradient(#FFE300 50%, #FFEB4C 85%);
-}
-*/
+
 .hitBlock{
     background-image: linear-gradient(#4f4f4f 15%, #757575 25%);
     width: 25%;
     height: 100%;
     position: absolute;
-    z-index: 500;
+    z-index: 200;
+    opacity: 0;
+
 }
 
-#hitBlock0{
-    opacity: 0;
-}
 #hitBlock1{
-    opacity: 0;
     left: 25%;
 }
 #hitBlock2{
-    opacity: 0;
     left: 50%;
 }
 #hitBlock3{
-    opacity: 0;
     left: 75%;
 }
 
 .destroyed{
-    border-radius: 5%;
-    margin-top: 0;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 100%;
     background-image: url("images/NoteDead.png");
     position: absolute;
-    background-position: center; /* Center the image */
-    background-repeat: no-repeat; /* Do not repeat the image */
+    background-position: center;
+    background-repeat: no-repeat;
     background-size: contain;
 }
 
-.slidecontainer {
-    width: 100%; /* Width of the outside container */
-    position: absolute;
-    top: 0;
-    height: 5%;
-    z-index: 9999; 
-}
-
-.slider{
-    position: relative;
-    height: 100%;
-    width: 24%;
-    bottom: 0;
-    display:inline-block
-}
-
 .key{
-    border-radius: 5%;
-    margin-top: 0;
     width: 25%;
     bottom: 0;
     position: absolute;
-    z-index: 9999;
+    z-index: 300;
     height: 20%;
     background-image: url("images/CircleUp.png");
-    background-position: center; /* Center the image */
-    background-repeat: no-repeat; /* Do not repeat the image */
+    background-position: center;
+    background-repeat: no-repeat;
     background-size: contain;
 }
 
@@ -114,25 +66,17 @@ html, body {
 }
 
 #key1{
-    /*
-    background-image: linear-gradient(#ffffff 1%, #222222 15%);
-    */
     left: 25%;
 }
+
 #key2{
-    /*
-    background-image: linear-gradient(#ffffff 80%, #999999 95%);
-    */
     left: 50%;
-
 }
+
 #key3{
-    /*
-    background-image: linear-gradient(#ffffff 1%, #222222 15%);
-    */
     left: 75%;
-
 }
+
 .Menu{
     height: 100%;
     width: 100%;
@@ -170,9 +114,6 @@ html, body {
     color: white;
 }
 
-#songSelect{
-    
-}
 .PointEntry{
     display: inline-block;
     width:50%;
@@ -194,7 +135,6 @@ html, body {
 
 .ScoreContainer{
     float: center;
-
     margin-left: auto;
     margin-right: auto;
 }

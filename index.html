@@ -5,10 +5,10 @@
 </head>
     <body>
         <script src="canvasjs.min.js"></script>
-        
         <script type="text/javascript" src="dat.gui.min.js"></script>
         <script src="analyser.js"></script>
         <script src="frontEnd.js"></script>
+
         <div id="MainMenu" class="Menu">
             <div class="header">MUSIC ANALYSER</div>
                 <button class="MenuButton" onclick="Start();">PLAY</button>
@@ -24,18 +24,20 @@
         </div>
         
         <div id="Scoreboard" class="Menu" style="display: none;">
-            <div class="header">HIGHSCROES</div>
+            <div class="header">HIGHSCORES</div>
             <li id="scores">
-            </li>
-            
+            </li>            
             <button class="MenuButton" onclick="showMainMenu();">BACK</a></li> 
         </div>
+
         <div id="Controlls" class="Menu" style="display: none;">
                 <div class="header">CONTROLLS</div>
                 <div class="TextEntry">USE "Q, W, E, R" TO HIT THE NOTES, WHEN THEY ARRIVE AT THE BOTTOM</div>
-            <button class="MenuButton" onclick="showMainMenu();">BACK</a></li></div> 
+            <button class="MenuButton" onclick="showMainMenu();">BACK</a></li>
+        </div>
+
         <div id="Credits" class="Menu" style="display: none;">
-                <div class="header">CREDITS</div>
+            <div class="header">CREDITS</div>
             <div class="TextEntry">JULIAN HEINKEN</div>
             <div class="TextEntry">&</div>
             <div class="TextEntry">JONATHAN HELD</div>
