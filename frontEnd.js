@@ -28,13 +28,12 @@ function start(numberOfNotes, targetFPS, timeToFall)
     }
 }
 
-function showHighscores(points){
-    points = 11;
+function showHighscores(score){
     var playerPosition = -1;
-    if(points > 0){
+    if(score > 0){
         for(var i = 0; i < playerPoints.length; i++){
-            if(points > playerPoints[i]){
-                playerPoints.splice(i, 0, points);
+            if(score > playerPoints[i]){
+                playerPoints.splice(i, 0, score);
                 playerPoints.pop();
                 playerNames.splice(i, 0, "Enter your name!");
                 playerNames.pop();
@@ -42,7 +41,14 @@ function showHighscores(points){
                 break;
             }
         }
-        var scoresElement = document.getElementById("scores");
+        
+
+        function submitName(name, position){
+            playerNames[position] = name;
+        }
+        
+    }
+    var scoresElement = document.getElementById("scores");
         while (scoresElement.firstChild) {
             scoresElement.removeChild(scoresElement.firstChild);
         }
@@ -71,11 +77,6 @@ function showHighscores(points){
             scoreElement.appendChild(pointElement);
             scoresElement.appendChild(scoreElement);
         }
-
-        function submitName(name, position){
-            playerNames[position] = name;
-        }
-    }
     document.getElementById("MainMenu").style.display = "none";
     document.getElementById("Game").style.display = "none";
     document.getElementById("Scoreboard").style.display = "initial";
@@ -97,6 +98,7 @@ function showMainMenu(){
     document.getElementById("Scoreboard").style.display = "none";
     document.getElementById("Controlls").style.display = "none";
     document.getElementById("Credits").style.display = "none";
+    points = 0;
 }
 
 function step(inputArray) {
