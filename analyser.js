@@ -22,6 +22,72 @@ var globalSettings = {
     songGain: 1.0,
 };
 
+function Init() {
+    // creates a single TransientDetectorObject
+    function createTransientDetector(name, attack, areaStartHz, areaEndHz, areaQ){
+            
+        var transDec = [];
+        // setup the WebAudio nodes
+        transDec.compMicro = context.createDynamicsCompressor();
+        transDec.compMacro = context.createDynamicsCompressor();
+        transDec.filterLowPass = context.createBiquadFilter();
+        transDec.filterLowPass.type = "lowpass";
+        transDec.filterHighPass = context.createBiquadFilter();
+        transDec.filterHighPass.type = "highpass";
+        transDec.debugGain = context.createGain();
+
+
+        transDec.filterHighPass.connect(transDec.filterLowPass);
+        transDec.filterLowPass.connect(transDec.compMacro);
+        transDec.filterLowPass.connect(transDec.compMicro);
+        transDec.filterLowPass.connect(transDec.debugGain);
+        transDec.debugGain.connect(context.destination);
+
+        transDec.guiFolder = gui.addFolder(name);
+
+        // optional debug code below
+        {
+            // settings dictonary for DatGUI
+            var transientSettings = { 
+            
+                attack: attack, // the attack of the local/fast compressor. higher values usually lead to less positives
+                transientLength: 0.7, // release time. longer values usallay lead to longer positives
+                threshold: 4, //unused
+                localRelease: 0.0006, //can prevent "bursting" transients, but is in a rightplace right now
+                areaStartHz: areaStartHz, // highpass cutoff freq
+                areaEndHz: areaEndHz,  // lowpass cutoff freq
+                areaQ: areaQ, // Q of low- and highpass filter
+                bandToMaster: 0.0 //(debug) wires the output of the low- and high pass filter to the master
+            };
+
+            // output dictionary for DatGUI
+            var results = {
+                transientLevel: 0,
+            };
+
+            // link settings to DatGUI
+            transDec.guiFolder.add(results, 'transientLevel', -2, 2).listen();
+            transDec.guiFolder.add(transientSettings, 'bandToMaster', 0, 1);
+            transDec.guiFolder.add(transientSettings, 'attack').min(0.001).max(0.2);
+            transDec.guiFolder.add(transientSettings, 'areaStartHz').min(20).max(5500);
+            transDec.guiFolder.add(transientSettings, 'areaEndHz').min(50).max(5500);
+            transDec.guiFolder.add(transientSettings, 'areaQ').min(0).max(20);
+            transDec.guiFolder.add(transientSettings, 'transientLength').min(0.001).max(1.5);
+            transDec.guiFolder.add(transientSettings, 'localRelease').min(0.000).max(0.001);
+        
+            transDec.settings = transientSettings;
+            transDec.results = results;
+        }
+        return transDec;
+    }
+
+    // setup transient detectors
+    transDectBands[0] = createTransientDetector("band0", 0.072, 20, 80, 14.0);
+    transDectBands[1] = createTransientDetector("band1", 0.08, 140, 250, 7.4);
+    transDectBands[2] = createTransientDetector("band2", 0.08, 1000, 1400, 1.9);
+    transDectBands[3] = createTransientDetector("band3", 0.76, 3600, 4100, 7);
+
+}
 // entry point for front-end
 function Start(){
     //Switch to gameview
@@ -62,70 +128,11 @@ function Start(){
     var transDectBands = [];
     // create the transient detectors for all four bands, after the song was loaded
     function OnLoadFinished(){
-        
-        // creates a single TransientDetectorObject
-        function createTransientDetector(name, attack, areaStartHz, areaEndHz, areaQ){
-            
-            var transDec = [];
-            // setup the WebAudio nodes
-            transDec.compMicro = context.createDynamicsCompressor();
-            transDec.compMacro = context.createDynamicsCompressor();
-            transDec.filterLowPass = context.createBiquadFilter();
-            transDec.filterLowPass.type = "lowpass";
-            transDec.filterHighPass = context.createBiquadFilter();
-            transDec.filterHighPass.type = "highpass";
-            transDec.debugGain = context.createGain();
 
-            songAudioSource.connect(transDec.filterHighPass);
-            transDec.filterHighPass.connect(transDec.filterLowPass);
-            transDec.filterLowPass.connect(transDec.compMacro);
-            transDec.filterLowPass.connect(transDec.compMicro);
-            transDec.filterLowPass.connect(transDec.debugGain);
-            transDec.debugGain.connect(context.destination);
-
-            transDec.guiFolder = gui.addFolder(name);
-
-            // optional debug code below
-            {
-                // settings dictonary for DatGUI
-                var transientSettings = { 
-                
-                    attack: attack, // the attack of the local/fast compressor. higher values usually lead to less positives
-                    transientLength: 0.7, // release time. longer values usallay lead to longer positives
-                    threshold: 4, //unused
-                    localRelease: 0.0006, //can prevent "bursting" transients, but is in a rightplace right now
-                    areaStartHz: areaStartHz, // highpass cutoff freq
-                    areaEndHz: areaEndHz,  // lowpass cutoff freq
-                    areaQ: areaQ, // Q of low- and highpass filter
-                    bandToMaster: 0.0 //(debug) wires the output of the low- and high pass filter to the master
-                };
-    
-                // output dictionary for DatGUI
-                var results = {
-                    transientLevel: 0,
-                };
-    
-                // link settings to DatGUI
-                transDec.guiFolder.add(results, 'transientLevel', -2, 2).listen();
-                transDec.guiFolder.add(transientSettings, 'bandToMaster', 0, 1);
-                transDec.guiFolder.add(transientSettings, 'attack').min(0.001).max(0.2);
-                transDec.guiFolder.add(transientSettings, 'areaStartHz').min(20).max(5500);
-                transDec.guiFolder.add(transientSettings, 'areaEndHz').min(50).max(5500);
-                transDec.guiFolder.add(transientSettings, 'areaQ').min(0).max(20);
-                transDec.guiFolder.add(transientSettings, 'transientLength').min(0.001).max(1.5);
-                transDec.guiFolder.add(transientSettings, 'localRelease').min(0.000).max(0.001);
-            
-                transDec.settings = transientSettings;
-                transDec.results = results;
-            }
-            return transDec;
-        }
-
-        // setup transient detectors
-        transDectBands[0] = createTransientDetector("band0", 0.072, 20, 80, 14.0);
-        transDectBands[1] = createTransientDetector("band1", 0.08, 140, 250, 7.4);
-        transDectBands[2] = createTransientDetector("band2", 0.08, 1000, 1400, 1.9);
-        transDectBands[3] = createTransientDetector("band3", 0.76, 3600, 4100, 7);
+        songAudioSource.connect(transDectBands[0].filterHighPass);
+        songAudioSource.connect(transDectBands[1].filterHighPass);
+        songAudioSource.connect(transDectBands[2].filterHighPass);
+        songAudioSource.connect(transDectBands[3].filterHighPass);
 
         // wire nodes together
         songAudioSource.connect(delay);    
@@ -134,7 +141,13 @@ function Start(){
 
         // start playing song
         songAudioSource.start(0,0);   
-        setTimeout(showHighscores(points), songAudioSource.duration);
+        setTimeout(function()
+        { 
+            songAudioSource.disconect();
+            showHighscores(points); 
+            console.log("timeout");
+        }
+         ,songAudioSource.duration);
 
         // notify front-end over finished initalization
         start(bandsCount, fps, timeToFall);
